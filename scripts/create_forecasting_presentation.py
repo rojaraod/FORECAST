@@ -3,8 +3,8 @@ Create a 20-slide PowerPoint deck for the Supply Chain Emissions Forecasting Mod
 
 The generated presentation is intended for ESG, Procurement, Sustainability,
 Data Science, and Audit stakeholders. It summarizes the model objective, source
-data, fallback logic, forecasting methods, formulas, implementation approach,
-dashboard scope, controls, risks, and next steps.
+data, direct emissions validation, forecasting methods, formulas, implementation
+approach, dashboard scope, controls, risks, and next steps.
 """
 
 from __future__ import annotations
@@ -199,7 +199,7 @@ def create_presentation() -> None:
     sub_p.font.color.rgb = RGBColor(207, 235, 235)
     add_callout(slide, 0.8, 4.35, 3.2, 1.0, "Audience", "ESG, Procurement, Sustainability, Data Science, Audit", RGBColor(232, 245, 245))
     add_callout(slide, 4.35, 4.35, 3.2, 1.0, "Output", "Python model, Excel formulas, Qlik Sense dashboard design", RGBColor(232, 245, 245))
-    add_callout(slide, 7.9, 4.35, 3.2, 1.0, "Scope", "Supplier target, industry fallback, and historical trend pathways", RGBColor(232, 245, 245))
+    add_callout(slide, 7.9, 4.35, 3.2, 1.0, "Scope", "Supplier target, industry target, and historical trend pathways", RGBColor(232, 245, 245))
 
     # 2
     slide = slides[1]
@@ -254,7 +254,7 @@ def create_presentation() -> None:
         slide,
         [
             ("Source data", "Supplier, activity, emissions, targets, factors", RGBColor(239, 246, 255)),
-            ("Emission calc", "Reported, scope, spend, revenue, industry fallback", RGBColor(232, 245, 245)),
+            ("Emission input", "Use supplied historical and current emissions", RGBColor(232, 245, 245)),
             ("Method select", "Supplier target, industry haircut, historical trend", RGBColor(240, 253, 244)),
             ("Forecast", "Target emissions, glide path, gap, budget", RGBColor(255, 247, 237)),
             ("Outputs", "CSV, Excel, Qlik dashboard, audit flags", RGBColor(254, 242, 242)),
@@ -269,7 +269,7 @@ def create_presentation() -> None:
         1.45,
         [
             "Architecture separates source data, calculations, forecast logic, and dashboard outputs.",
-            "Each output record keeps its source, method, quality, and validation flags for traceability.",
+            "Each output record keeps its emissions source, forecast method, quality, and validation flags for traceability.",
         ],
         17,
     )
@@ -289,7 +289,7 @@ def create_presentation() -> None:
             ["Supplier Master", "Supplier_ID, Supplier_Name, Industry", "Segmentation, joins, ownership"],
             ["Historical Emissions", "Year, spend, revenue, reported emissions, scopes", "Base emissions and trends"],
             ["Supplier Targets", "Baseline year, target year, reduction percent", "Supplier-specific pathway"],
-            ["Industry Haircut", "Industry target year, reduction percent, factors", "Fallback targets and estimates"],
+            ["Industry Haircut", "Industry target year, reduction percent, factors", "Industry pathway assumptions"],
             ["Formula Dictionary", "Calculated parameter, Excel formula", "Excel implementation and audit support"],
         ],
         10,
@@ -298,15 +298,15 @@ def create_presentation() -> None:
 
     # 6
     slide = slides[5]
-    add_title(slide, "Total Emission Value Fallback Logic")
+    add_title(slide, "Direct Emissions Input Validation")
     add_process_flow(
         slide,
         [
-            ("P1", "Reported emissions", RGBColor(220, 252, 231)),
-            ("P2", "Scope 1 + 2 + 3", RGBColor(232, 245, 245)),
-            ("P3", "Spend x factor", RGBColor(239, 246, 255)),
-            ("P4", "Revenue x intensity", RGBColor(255, 247, 237)),
-            ("P5/P6", "Industry estimate or missing", RGBColor(254, 242, 242)),
+            ("1", "Load supplier emissions", RGBColor(220, 252, 231)),
+            ("2", "Validate non-negative values", RGBColor(232, 245, 245)),
+            ("3", "Check completeness", RGBColor(239, 246, 255)),
+            ("4", "Flag outliers", RGBColor(255, 247, 237)),
+            ("5", "Use in forecast", RGBColor(254, 242, 242)),
         ],
         y=1.85,
     )
@@ -317,8 +317,8 @@ def create_presentation() -> None:
         11.8,
         1.55,
         [
-            "Formula: use the highest-quality available input, then move through increasingly estimated fallbacks.",
-            "Every record receives Emission_Source_Flag, Fallback_Applied_Flag, Data_Quality_Flag, Missing_Parameter_Flag, Confidence_Score, and Validation_Flag.",
+            "The 6-level waterfall is not required because all suppliers have historical and current emissions.",
+            "Every record receives Emission_Source_Flag, Emissions_Data_Available_Flag, Data_Quality_Flag, Missing_Parameter_Flag, Confidence_Score, and Validation_Flag.",
         ],
         16,
     )
@@ -333,14 +333,14 @@ def create_presentation() -> None:
         1.35,
         12.0,
         4.8,
-        ["Source used", "Quality", "Typical confidence", "Audit interpretation"],
+        ["Validation item", "Expected result", "Typical confidence", "Audit interpretation"],
         [
-            ["Supplier reported emissions", "High", "0.95", "Preferred supplier disclosure"],
-            ["Scope 1 + Scope 2 + Scope 3", "High", "0.88", "Reported components sum to total"],
-            ["Spend-based estimate", "Medium", "0.70", "Good scalable proxy"],
-            ["Revenue-based estimate", "Medium-Low", "0.60", "Useful when spend is missing"],
-            ["Industry estimate", "Low", "0.45", "Last-resort estimate for coverage"],
-            ["Missing data", "Missing", "0.00", "Requires remediation"],
+            ["Emissions present", "Total_Emission_Value is populated", "0.95", "Supplier-year can be forecast"],
+            ["Non-negative", "Emissions are >= 0", "0.95", "Invalid negative values are blocked"],
+            ["Reasonable range", "No extreme outlier", "0.90", "Outliers route to review"],
+            ["Reporting year present", "Supplier_Year is populated", "0.95", "Trend can be calculated"],
+            ["Baseline available", "Baseline year has emissions", "0.90", "Target pathway can be anchored"],
+            ["Missing data", "No emissions value", "0.00", "Requires remediation"],
         ],
         10,
     )
@@ -350,7 +350,7 @@ def create_presentation() -> None:
     slide = slides[7]
     add_title(slide, "Forecast Method Selection Hierarchy")
     add_callout(slide, 1.0, 1.5, 3.4, 1.5, "1. Supplier Target Pathway", "Use when supplier baseline year, target year, and reduction percent are available.", RGBColor(220, 252, 231))
-    add_callout(slide, 4.95, 1.5, 3.4, 1.5, "2. Industry Haircut Pathway", "Use when supplier target is missing but industry pathway assumptions exist.", RGBColor(232, 245, 245))
+    add_callout(slide, 4.95, 1.5, 3.4, 1.5, "2. Industry Haircut Pathway", "Use when supplier target is missing but industry target assumptions exist.", RGBColor(232, 245, 245))
     add_callout(slide, 8.9, 1.5, 3.4, 1.5, "3. Historical Trend Pathway", "Use supplier historical emissions CAGR when target pathways are unavailable.", RGBColor(255, 247, 237))
     add_bullets(
         slide,
@@ -399,7 +399,7 @@ def create_presentation() -> None:
         5.9,
         4.9,
         [
-            "Use when supplier-specific target data is missing.",
+            "Use when supplier-specific target data is missing but actual supplier emissions are available.",
             "Inputs: industry reduction percentage, industry target year, supplier baseline emissions.",
             "Target_Emission = Baseline_Emission x (1 - Industry_Reduction_Percentage).",
             "Forecast uses a linear glide path from baseline to industry target.",
@@ -426,11 +426,11 @@ def create_presentation() -> None:
             "Inputs: supplier historical emissions by year and latest emissions.",
             "Historical_Trend = CAGR of supplier emissions history.",
             "Forecast_Emission = Latest_Emission x (1 + Historical_Trend)^n.",
-            "Best used as a data-driven fallback with confidence caveats.",
+            "Best used as a data-driven trend method with confidence caveats.",
         ],
         16,
     )
-    add_callout(slide, 7.05, 1.6, 5.2, 1.3, "Business impact", "Prevents blank forecasts and highlights suppliers needing better target data.", RGBColor(255, 247, 237))
+    add_callout(slide, 7.05, 1.6, 5.2, 1.3, "Business impact", "Uses actual emissions history to forecast suppliers without target pathways.", RGBColor(255, 247, 237))
     add_callout(slide, 7.05, 3.25, 5.2, 1.3, "Advantage", "Reflects observed behavior and supplier growth patterns.", RGBColor(239, 246, 255))
     add_callout(slide, 7.05, 4.9, 5.2, 1.3, "Drawback", "Sensitive to outliers, reporting changes, and limited history.", RGBColor(254, 242, 242))
     add_footer(slide, 11)
@@ -446,7 +446,7 @@ def create_presentation() -> None:
         5.55,
         ["Parameter", "Formula"],
         [
-            ["Total emission", "Reported else scopes else spend x factor else revenue x intensity else industry estimate"],
+            ["Total emission", "Use supplied Total_Emission_Value or Reported_Emissions"],
             ["Target emission", "Baseline_Emission x (1 - Reduction_Percentage)"],
             ["Annual reduction", "(Baseline_Emission - Target_Emission) / (Target_Year - Baseline_Year)"],
             ["Glide path", "max(Target_Emission, Baseline_Emission - Annual_Reduction x Years_From_Baseline)"],
@@ -470,8 +470,8 @@ def create_presentation() -> None:
         [
             "Supplier identity: ID, name, industry.",
             "Time fields: supplier year, baseline year, target year, forecast year.",
-            "Emissions inputs: reported emissions, scopes, spend, revenue, total emission value.",
-            "Audit flags: source, fallback, data quality, missing parameters, validation.",
+            "Emissions inputs: reported emissions, total emission value, scopes, spend, revenue.",
+            "Audit flags: emissions source, data availability, data quality, missing parameters, validation.",
             "Forecast outputs: target, forecast, glide path, gap, budget, confidence, risk, status.",
         ],
         16,
@@ -510,8 +510,8 @@ def create_presentation() -> None:
         slide,
         [
             ("1", "Generate or read data", RGBColor(239, 246, 255)),
-            ("2", "Clean missing values", RGBColor(232, 245, 245)),
-            ("3", "Calculate emissions and flags", RGBColor(240, 253, 244)),
+            ("2", "Validate emissions inputs", RGBColor(232, 245, 245)),
+            ("3", "Create quality and source flags", RGBColor(240, 253, 244)),
             ("4", "Apply forecasts and glide paths", RGBColor(255, 247, 237)),
             ("5", "Export CSV and Excel", RGBColor(254, 242, 242)),
         ],
@@ -544,12 +544,12 @@ def create_presentation() -> None:
         [
             "Use structured table references for maintainable formulas.",
             "Keep separate tables for source data, targets, factors, and forecast output.",
-            "Use flags to make fallback logic visible to business users.",
+            "Use flags to make emissions availability and validation status visible to business users.",
             "Protect formula columns and allow source data refresh.",
         ],
         16,
     )
-    add_callout(slide, 7.05, 1.45, 5.35, 1.2, "Example", '=IF([@[Reported_Emissions]]<>"",[@[Reported_Emissions]], fallback logic)', RGBColor(239, 246, 255))
+    add_callout(slide, 7.05, 1.45, 5.35, 1.2, "Example", '=IF([@[Reported_Emissions]]<>"",[@[Reported_Emissions]],"Missing Emissions")', RGBColor(239, 246, 255))
     add_callout(slide, 7.05, 3.05, 5.35, 1.2, "Formula dictionary", "Generated as formula_dictionary.csv and included in the Excel workbook.", RGBColor(232, 245, 245))
     add_callout(slide, 7.05, 4.65, 5.35, 1.2, "Audit benefit", "Business users can trace every calculated field to a formula.", RGBColor(240, 253, 244))
     add_footer(slide, 16)
@@ -570,7 +570,7 @@ def create_presentation() -> None:
             ["Supplier trend", "Supplier forecast line, top 20", "Which suppliers drive emissions?"],
             ["Industry benchmark", "Industry emissions and intensity", "Which sectors are highest risk?"],
             ["Gap-to-target", "Gap by supplier and year", "Where is action required?"],
-            ["Data quality", "Source, fallback, missing fields", "Can we trust the data?"],
+            ["Data quality", "Source, availability, missing fields", "Can we trust the data?"],
             ["Risk heatmap", "Industry x risk category", "Where should Procurement engage?"],
             ["Scenario analysis", "Reduction and growth variables", "What if assumptions change?"],
         ],
@@ -585,7 +585,7 @@ def create_presentation() -> None:
         slide,
         [
             ("Input controls", "Mandatory supplier ID, year, industry; non-negative emissions and activity values.", RGBColor(239, 246, 255)),
-            ("Calculation controls", "Explicit fallback sequence, source flags, validation flags, and method flags.", RGBColor(232, 245, 245)),
+            ("Calculation controls", "Direct emissions validation, source flags, validation flags, and method flags.", RGBColor(232, 245, 245)),
             ("Output controls", "Risk category, confidence score, target status, and exception review views.", RGBColor(240, 253, 244)),
         ],
         y=1.55,
@@ -597,7 +597,7 @@ def create_presentation() -> None:
         11.6,
         1.4,
         [
-            "Recommended validation: missing emissions, negative values, target year before baseline, low confidence, outliers, missing factors.",
+            "Recommended validation: missing emissions, negative values, target year before baseline, low confidence, and outliers.",
             "Each exception should route to supplier data remediation or analyst review.",
         ],
         16,

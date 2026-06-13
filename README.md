@@ -7,8 +7,8 @@ Audit teams.
 ## What is included
 
 - Mathematical forecasting methodology for supplier emissions.
-- Total emissions fallback logic with source, quality, validation, and confidence
-  flags.
+- Direct historical/current emissions validation with source, quality, validation,
+  and confidence flags.
 - Supplier target, industry haircut, and historical trend forecasting pathways.
 - Excel structured formula library.
 - Qlik Sense dashboard design and expressions.

@@ -5,11 +5,11 @@
 The objective is to forecast supplier-level greenhouse gas emissions from historical years to future target years using a transparent, auditable, and scalable mathematical model. The framework supports:
 
 - Supplier-specific decarbonization targets when supplier target data exists.
-- Industry-level fallback targets when supplier targets are unavailable.
+- Industry-level target pathways when supplier-specific targets are unavailable.
 - Historical trend forecasting when neither supplier nor industry targets are sufficient.
 - Python execution, Excel implementation, and Qlik Sense dashboarding.
 
-The model is designed for ESG, Procurement, Sustainability, Data Science, Finance, and Audit teams. It prioritizes explainability through calculation flags, fallback flags, missing data indicators, confidence scores, and validation checks.
+The model is designed for ESG, Procurement, Sustainability, Data Science, Finance, and Audit teams. Because historical and current emissions are available for all suppliers, the model uses supplied emissions directly and focuses on validation checks, confidence scores, and forecast-method transparency.
 
 ---
 
@@ -20,7 +20,7 @@ The model is designed for ESG, Procurement, Sustainability, Data Science, Financ
 1. **Supplier Master**: one row per supplier with supplier identity and segmentation.
 2. **Historical Emissions**: supplier-year emissions, activity, scope, and factor data.
 3. **Supplier Targets**: supplier-specific baseline, target year, and target reduction details.
-4. **Industry Haircut Pathway**: industry fallback reduction assumptions and emission factors.
+4. **Industry Haircut Pathway**: industry reduction assumptions and benchmark factors.
 5. **Forecast Output**: supplier-year forecast results by forecast year.
 6. **Data Dictionary**: source and output metadata for governance.
 7. **Formula Dictionary**: Excel formula library for implementation.
@@ -32,7 +32,7 @@ Supplier Master
         |
 Historical Emissions + Supplier Targets + Industry Haircut Pathway
         |
-Total Emission Value Fallback Calculation
+Direct Emissions Validation
         |
 Forecast Method Selection
         |
@@ -51,39 +51,40 @@ CSV, Excel, Qlik Sense Dashboard
 |---|---|---:|---|---|---|---|---|
 | Supplier_ID | Unique supplier identifier | String | ERP / Supplier master | Mandatory | Stable join key | Groups supplier history and forecasts | SUP-0001 |
 | Supplier_Name | Supplier legal or reporting name | String | ERP / Supplier master | Mandatory | Reporting label | Used in output and dashboards | Electronics Supplier 001 |
-| Supplier_Industry | Industry classification | String | Supplier master / taxonomy | Mandatory | Benchmarking and fallback targets | Drives industry haircut and factors | Electronics |
+| Supplier_Industry | Industry classification | String | Supplier master / taxonomy | Mandatory | Benchmarking and industry targets | Drives industry haircut and factors | Electronics |
 | Supplier_Country | Supplier primary country | String | Supplier master | Optional | Geographic segmentation | Dashboard filter and future regional factors | DE |
 | Supplier_Status | Supplier relationship status | String | Procurement | Optional | Supplier governance | Risk segmentation | Strategic |
 | Preferred_Supplier_Flag | Preferred supplier indicator | Boolean | Procurement | Optional | Procurement prioritization | Risk prioritization and filters | TRUE |
 | Supplier_Year | Historical reporting year | Integer | ESG platform / data lake | Mandatory | Time-series anchor | Historical trend and latest-year selection | 2024 |
-| Gross_Spend | Annual spend with supplier | Decimal | ERP / AP / Procurement | Optional | Spend-based estimation and intensity | Fallback priority 3; denominator for intensity | 2500000 |
-| Revenue | Supplier revenue or attributable revenue | Decimal | Supplier survey / Finance | Optional | Revenue-based estimation | Fallback priority 4 | 12000000 |
-| Reported_Emissions | Supplier reported total emissions | Decimal | CDP / supplier portal / ESG report | Optional | Preferred actual emissions input | Fallback priority 1; highest confidence | 1850.75 |
-| Scope1_Emission | Direct supplier emissions | Decimal | Supplier ESG report | Optional | Scope-level rollup | Fallback priority 2 | 120.5 |
-| Scope2_Emission | Purchased energy emissions | Decimal | Supplier ESG report | Optional | Scope-level rollup | Fallback priority 2 | 80.2 |
-| Scope3_Emission | Supplier value-chain emissions | Decimal | Supplier ESG report | Optional | Scope-level rollup | Fallback priority 2 | 1650.1 |
+| Gross_Spend | Annual spend with supplier | Decimal | ERP / AP / Procurement | Optional | Emissions intensity and growth analysis | Denominator for intensity and growth | 2500000 |
+| Revenue | Supplier revenue or attributable revenue | Decimal | Supplier survey / Finance | Optional | Financial context and intensity analysis | Optional denominator and dashboard filter | 12000000 |
+| Reported_Emissions | Supplier reported total emissions | Decimal | CDP / supplier portal / ESG report | Mandatory | Historical/current emissions input | Core model input | 1850.75 |
+| Total_Emission_Value | Validated supplier total emissions | Decimal | ESG data lake / supplier report | Mandatory | Forecast baseline and history | Drives all forecasts | 1850.75 |
+| Scope1_Emission | Direct supplier emissions | Decimal | Supplier ESG report | Optional | Scope-level breakdown | Dashboard segmentation | 120.5 |
+| Scope2_Emission | Purchased energy emissions | Decimal | Supplier ESG report | Optional | Scope-level breakdown | Dashboard segmentation | 80.2 |
+| Scope3_Emission | Supplier value-chain emissions | Decimal | Supplier ESG report | Optional | Scope-level breakdown | Dashboard segmentation | 1650.1 |
 | Baseline_Year | Supplier target baseline year | Integer | Supplier target table | Optional | Target pathway start | Defines baseline emission | 2020 |
 | Target_Year | Supplier target endpoint year | Integer | Supplier target table | Optional | Target pathway endpoint | Defines target horizon | 2030 |
 | Target_Reduction_Percentage | Supplier target reduction from baseline | Decimal | Supplier target table | Optional | Supplier-specific decarbonization goal | Target emission calculation | 0.42 |
 | Interim_Target_Reduction_Percentage | Supplier interim reduction goal | Decimal | Supplier target table | Optional | Midpoint governance | Optional interim milestone tracking | 0.21 |
 | Target_Type | Absolute or intensity target | String | Supplier target table | Optional | Target interpretation | Can switch formula basis | Absolute |
 | Target_Source | Evidence source for supplier target | String | SBTi / CDP / survey / contract | Optional | Auditability | Confidence adjustment | SBTi |
-| Industry_Baseline_Year | Industry baseline year | Integer | Industry benchmark table | Optional | Industry fallback anchor | Industry haircut pathway | 2019 |
-| Industry_Target_Year | Industry target year | Integer | Industry benchmark table | Optional | Industry fallback endpoint | Industry haircut pathway | 2035 |
-| Industry_Reduction_Percentage | Industry target reduction haircut | Decimal | Benchmark / pathway scenario | Optional | Fallback decarbonization assumption | Used when supplier target missing | 0.35 |
-| Industry_Emission_Factor | Average emissions factor for industry | Decimal | LCA / EEIO / benchmark | Optional | Last-resort emissions estimate | Fallback priority 5 | 420.5 |
-| Spend_Based_Emission_Factor | Emissions per currency unit of spend | Decimal | EEIO / factor database | Optional | Spend-based calculation | Fallback priority 3 | 0.00045 |
-| Revenue_Based_Emission_Intensity | Emissions per currency unit of revenue | Decimal | Industry benchmark / ESG data | Optional | Revenue-based calculation | Fallback priority 4 | 0.00021 |
+| Industry_Baseline_Year | Industry baseline year | Integer | Industry benchmark table | Optional | Industry target pathway anchor | Industry haircut pathway | 2019 |
+| Industry_Target_Year | Industry target year | Integer | Industry benchmark table | Optional | Industry target pathway endpoint | Industry haircut pathway | 2035 |
+| Industry_Reduction_Percentage | Industry target reduction haircut | Decimal | Benchmark / pathway scenario | Optional | Industry decarbonization assumption | Used when supplier target missing | 0.35 |
+| Industry_Emission_Factor | Average emissions factor for industry | Decimal | LCA / EEIO / benchmark | Optional | Benchmarking context | Not required for emissions calculation when actual emissions exist | 420.5 |
+| Spend_Based_Emission_Factor | Emissions per currency unit of spend | Decimal | EEIO / factor database | Optional | Benchmarking context | Not required when actual emissions exist | 0.00045 |
+| Revenue_Based_Emission_Intensity | Emissions per currency unit of revenue | Decimal | Industry benchmark / ESG data | Optional | Benchmarking context | Not required when actual emissions exist | 0.00021 |
 
 ### Supporting calculated attributes
 
 | Attribute name | Description | Data type | Source system | Mandatory / optional | Business purpose | Model impact | Example value |
 |---|---|---:|---|---|---|---|---|
-| Total_Emission_Value | Best available total emissions value | Decimal | Calculated | Mandatory output | Forecast model input | Drives all emissions forecasts | 1500.42 |
-| Emission_Source_Flag | Source used for total emissions | String | Calculated | Mandatory output | Audit trail | Explains fallback basis | Spend-Based Estimate |
-| Fallback_Applied_Flag | Indicates whether fallback was used | Boolean | Calculated | Mandatory output | Data quality control | Confidence adjustment | TRUE |
-| Data_Quality_Flag | High / Medium / Low / Missing | String | Calculated | Mandatory output | Governance and filtering | Risk and confidence | Medium |
-| Missing_Parameter_Flag | Missing inputs that affected calculation | String | Calculated | Mandatory output | Data remediation | Data quality dashboard | Reported_Emissions |
+| Total_Emission_Value | Validated total emissions value | Decimal | Source / validation step | Mandatory output | Forecast model input | Drives all emissions forecasts | 1500.42 |
+| Emission_Source_Flag | Source used for total emissions | String | Calculated | Mandatory output | Audit trail | Confirms direct emissions input | Provided Total Emissions |
+| Emissions_Data_Available_Flag | Confirms emissions are available | Boolean | Calculated | Mandatory output | Completeness control | Excludes incomplete records | TRUE |
+| Data_Quality_Flag | High / Missing / Review | String | Calculated | Mandatory output | Governance and filtering | Risk and confidence | High |
+| Missing_Parameter_Flag | Missing inputs that affected calculation | String | Calculated | Mandatory output | Data remediation | Data quality dashboard | None |
 | Confidence_Score | Forecast confidence score from 0 to 1 | Decimal | Calculated | Mandatory output | Forecast reliability | Risk scoring | 0.82 |
 | Validation_Flag | Validity result | String | Calculated | Mandatory output | Audit exception handling | Excludes or flags anomalies | Valid |
 | Forecast_Method_Flag | Selected forecast method | String | Calculated | Mandatory output | Method transparency | Explains forecast pathway | Supplier Target Pathway |
@@ -92,50 +93,38 @@ CSV, Excel, Qlik Sense Dashboard
 
 ---
 
-## 4. Total Emission Value Calculation
+## 4. Total Emission Value Validation
 
-### Fallback priority logic
+### Why the 6-level waterfall is not required here
 
-1. **Supplier Reported Emissions**: use the supplier's reported total emissions if available.
-2. **Scope rollup**: if reported emissions are missing, use Scope 1 + Scope 2 + Scope 3.
-3. **Spend-based estimate**: if emissions are missing, use Gross Spend x Spend-Based Emission Factor.
-4. **Revenue-based estimate**: if spend-based calculation is not possible, use Revenue x Revenue-Based Emission Intensity.
-5. **Industry average or industry haircut estimate**: use industry factor scaled by available activity proxy.
-6. **Missing data**: mark as missing when no defensible calculation is possible.
+The 6-level data resolution waterfall is only required when supplier emissions are incomplete and the model must estimate missing values from scopes, spend, revenue, or industry averages. In this dataset, all suppliers already have historical and current emissions, so the model should not estimate emissions. It should use the supplied emissions directly and apply validation controls.
 
-### Mathematical logic
+### Direct input logic
 
 Let:
 
+- `TE` = source-provided Total_Emission_Value
 - `RE` = Reported_Emissions
-- `S1`, `S2`, `S3` = scope emissions
-- `Spend` = Gross_Spend
-- `SEF` = Spend_Based_Emission_Factor
-- `Revenue` = supplier revenue
-- `RI` = Revenue_Based_Emission_Intensity
-- `IEF` = Industry_Emission_Factor
-- `Proxy` = Spend or Revenue
 
 ```text
 Total_Emission_Value =
-    RE, if RE exists
-    S1 + S2 + S3, if all scopes exist
-    Spend x SEF, if Spend and SEF exist
-    Revenue x RI, if Revenue and RI exist
-    IEF x Proxy / 1,000,000, if IEF and Proxy exist
-    Missing Data, otherwise
+    TE, if source total emissions are provided
+    RE, if reported emissions are provided and TE is not separately provided
+    Missing Emissions, only if both are blank
 ```
 
-### Required flags
+This is not a waterfall-estimation method. It is a validation rule that confirms the emissions value is present, non-negative, and reasonable before forecasting.
+
+### Required validation flags
 
 | Flag | Purpose | Example values |
 |---|---|---|
-| Emission_Source_Flag | Shows which calculation source was used | Supplier Reported Emissions, Scope 1 + Scope 2 + Scope 3, Spend-Based Estimate |
-| Fallback_Applied_Flag | TRUE when any fallback after reported emissions was used | TRUE / FALSE |
-| Data_Quality_Flag | Summarizes quality tier | High, Medium, Medium-Low, Low, Missing |
-| Missing_Parameter_Flag | Lists missing inputs | Reported_Emissions; Scope_Emissions |
-| Confidence_Score | Numeric reliability score | 0.95 for reported emissions, 0.70 for spend estimate |
-| Validation_Flag | Identifies validity issues | Valid, Missing Emissions, Outlier Review |
+| Emission_Source_Flag | Shows whether the model used the supplied total emissions or reported emissions field | Provided Total Emissions, Supplier Reported Emissions |
+| Emissions_Data_Available_Flag | Confirms the supplier-year record has emissions available | TRUE / FALSE |
+| Data_Quality_Flag | Summarizes quality tier for the supplied value | High, Missing, Review |
+| Missing_Parameter_Flag | Lists missing mandatory inputs | None, Total_Emission_Value |
+| Confidence_Score | Numeric reliability score for direct emissions input | 0.95 when emissions are available |
+| Validation_Flag | Identifies validity issues | Valid, Missing Emissions, Invalid Negative Emissions, Outlier Review |
 
 ---
 
@@ -202,7 +191,7 @@ ELSE:
 |---|---|---|
 | Historical Trend | Supplier emissions CAGR from historical records | Understand actual decarbonization or growth pattern |
 | Supplier Target Pathway | Forecast based on supplier's own target | Supplier accountability |
-| Industry Haircut Pathway | Forecast based on industry reduction benchmark | Fallback for suppliers without targets |
+| Industry Haircut Pathway | Forecast based on industry reduction benchmark | Used for suppliers without specific targets |
 | Absolute Emissions Reduction | Baseline emissions minus forecast emissions | Quantifies tonnes reduced |
 | Emissions Intensity Reduction | Reduction in emissions per spend or revenue | Normalizes performance for growth |
 | Supplier Growth Projection | Spend or revenue CAGR | Adjusts trend-based forecasts for supplier growth |
@@ -226,7 +215,7 @@ ELSE:
 
 | Calculation | Formula |
 |---|---|
-| Total Emission Value | `RE`, else `S1 + S2 + S3`, else `Spend x SEF`, else `Revenue x RI`, else `IEF x Proxy / 1,000,000` |
+| Total Emission Value | `TE` if source total emissions are supplied; otherwise `RE`; otherwise `Missing Emissions` |
 | Emission Intensity | `Emission_Intensity = Emissions / Activity`, where activity is spend or revenue |
 | Target Emission | `Target_Emission = Baseline_Emission x (1 - Reduction_Percentage)` |
 | Annual Reduction | `Annual_Reduction_Required = (Baseline_Emission - Target_Emission) / (Target_Year - Baseline_Year)` |
@@ -253,11 +242,11 @@ Assume the main Excel table is named `ForecastTable`.
 
 | Parameter | Structured Excel formula |
 |---|---|
-| Total_Emission_Value | `=IF([@[Reported_Emissions]]<>"",[@[Reported_Emissions]],IF(AND([@[Scope1_Emission]]<>"",[@[Scope2_Emission]]<>"",[@[Scope3_Emission]]<>""),[@[Scope1_Emission]]+[@[Scope2_Emission]]+[@[Scope3_Emission]],IF(AND([@[Gross_Spend]]<>"",[@[Spend_Based_Emission_Factor]]<>""),[@[Gross_Spend]]*[@[Spend_Based_Emission_Factor]],IF(AND([@[Revenue]]<>"",[@[Revenue_Based_Emission_Intensity]]<>""),[@[Revenue]]*[@[Revenue_Based_Emission_Intensity]],IF([@[Industry_Emission_Factor]]<>"",[@[Industry_Emission_Factor]],"Missing Data")))))` |
-| Emission_Source_Flag | `=IF([@[Reported_Emissions]]<>"","Supplier Reported Emissions",IF(AND([@[Scope1_Emission]]<>"",[@[Scope2_Emission]]<>"",[@[Scope3_Emission]]<>""),"Scope 1 + Scope 2 + Scope 3",IF(AND([@[Gross_Spend]]<>"",[@[Spend_Based_Emission_Factor]]<>""),"Spend-Based Estimate",IF(AND([@[Revenue]]<>"",[@[Revenue_Based_Emission_Intensity]]<>""),"Revenue-Based Estimate",IF([@[Industry_Emission_Factor]]<>"","Industry Haircut Estimate","Missing Data")))))` |
-| Fallback_Applied_Flag | `=IF([@[Emission_Source_Flag]]="Supplier Reported Emissions",FALSE,TRUE)` |
-| Data_Quality_Flag | `=IFS([@[Emission_Source_Flag]]="Supplier Reported Emissions","High",[@[Emission_Source_Flag]]="Scope 1 + Scope 2 + Scope 3","High",[@[Emission_Source_Flag]]="Spend-Based Estimate","Medium",[@[Emission_Source_Flag]]="Revenue-Based Estimate","Medium-Low",[@[Emission_Source_Flag]]="Industry Haircut Estimate","Low",TRUE,"Missing")` |
-| Confidence_Score | `=IFS([@[Emission_Source_Flag]]="Supplier Reported Emissions",0.95,[@[Emission_Source_Flag]]="Scope 1 + Scope 2 + Scope 3",0.88,[@[Emission_Source_Flag]]="Spend-Based Estimate",0.70,[@[Emission_Source_Flag]]="Revenue-Based Estimate",0.60,[@[Emission_Source_Flag]]="Industry Haircut Estimate",0.45,TRUE,0)` |
+| Total_Emission_Value | `=IF([@[Source_Total_Emission_Value]]<>"",[@[Source_Total_Emission_Value]],IF([@[Reported_Emissions]]<>"",[@[Reported_Emissions]],"Missing Emissions"))` |
+| Emission_Source_Flag | `=IF([@[Source_Total_Emission_Value]]<>"","Provided Total Emissions",IF([@[Reported_Emissions]]<>"","Supplier Reported Emissions","Missing Emissions"))` |
+| Emissions_Data_Available_Flag | `=IF([@[Total_Emission_Value]]<>"",TRUE,FALSE)` |
+| Data_Quality_Flag | `=IF([@[Total_Emission_Value]]<>"","High","Missing")` |
+| Confidence_Score | `=IF([@[Total_Emission_Value]]<>"",0.95,0)` |
 | Forecast_Method_Flag | `=IF(AND([@[Target_Year]]<>"",[@[Target_Reduction_Percentage]]<>""),"Supplier Target Pathway",IF(AND([@[Industry_Target_Year]]<>"",[@[Industry_Reduction_Percentage]]<>""),"Industry Haircut Pathway","Historical Trend Pathway"))` |
 | Baseline_Emission | `=SUMIFS(ForecastTable[Total_Emission_Value],ForecastTable[Supplier_ID],[@[Supplier_ID]],ForecastTable[Supplier_Year],[@[Baseline_Year]])` |
 | Target_Emission | `=[@[Baseline_Emission]]*(1-[@[Target_Reduction_Percentage]])` |
@@ -298,9 +287,9 @@ python src/supply_chain_emissions_forecast.py --output-dir data/output
 It performs the following steps:
 
 1. Generates or reads supplier source datasets.
-2. Cleans and handles missing values with explicit fallback logic.
-3. Calculates `Total_Emission_Value`.
-4. Creates source, fallback, missing parameter, validation, and quality flags.
+2. Validates complete historical/current emissions inputs.
+3. Confirms `Total_Emission_Value` for each supplier-year record.
+4. Creates source, availability, missing parameter, validation, and quality flags.
 5. Applies supplier target pathway.
 6. Applies industry haircut pathway.
 7. Applies historical trend pathway.
@@ -321,7 +310,7 @@ The Python script generates:
 - Multiple baseline years and target years.
 - Gross spend and revenue.
 - Reported emissions and scope emissions.
-- Controlled missing values to test fallback logic.
+- Complete historical and current emissions for all suppliers.
 - Industry haircut table.
 - Supplier target table.
 - Historical emissions table.
@@ -360,7 +349,7 @@ The final forecast output includes:
 - Revenue
 - Total_Emission_Value
 - Emission_Source_Flag
-- Fallback_Applied_Flag
+- Emissions_Data_Available_Flag
 - Data_Quality_Flag
 - Missing_Parameter_Flag
 - Validation_Flag
@@ -447,7 +436,7 @@ The final forecast output includes:
 | Chart name | Dimension | Measure | Qlik expression | Purpose | Business question answered |
 |---|---|---|---|---|---|
 | Quality Flag Split | Data_Quality_Flag | Record count | `Count(Supplier_ID)` | Quality monitoring | How much data is high or low quality? |
-| Emission Source Split | Emission_Source_Flag | Emissions | `Sum(Total_Emission_Value)` | Fallback transparency | Which fallback sources drive emissions? |
+| Emission Source Split | Emission_Source_Flag | Emissions | `Sum(Total_Emission_Value)` | Source transparency | Which direct emissions source is used? |
 | Missing Parameters | Missing_Parameter_Flag | Record count | `Count(Supplier_ID)` | Data remediation | Which inputs should be collected first? |
 | Validation Exceptions | Validation_Flag | Record count | `Count(Supplier_ID)` | Audit controls | What records require review? |
 
@@ -478,10 +467,9 @@ Recommended validation rules:
 | Negative emissions | Emissions must be >= 0 | Flag invalid |
 | Missing total emissions | Total_Emission_Value is null | Exclude from forecast or remediate |
 | Extreme outliers | Total emissions above threshold or z-score limit | Flag for review |
-| Missing target year | Supplier target reduction exists but target year missing | Use industry fallback |
+| Missing target year | Supplier target reduction exists but target year missing | Use industry pathway |
 | Target year before baseline year | Target_Year <= Baseline_Year | Flag invalid target |
-| Missing spend factor | Spend present but factor missing | Use next fallback |
-| Missing revenue intensity | Revenue present but intensity missing | Use next fallback |
+| Missing spend or revenue | Activity denominator missing | Intensity or growth metrics may be blank |
 | Low confidence | Confidence_Score below threshold | Prioritize data improvement |
 
 ---
@@ -490,16 +478,15 @@ Recommended validation rules:
 
 ### Advantages
 
-- Transparent fallback hierarchy.
-- Works with incomplete supplier emissions data.
-- Supports supplier-specific and industry fallback decarbonization pathways.
+- Direct use of actual historical/current supplier emissions.
+- Avoids unnecessary estimates when emissions data is already complete.
+- Supports supplier-specific and industry decarbonization pathways.
 - Produces audit-friendly source, method, quality, and validation flags.
 - Scales across Python, Excel, and Qlik Sense.
 - Creates supplier risk and confidence views for procurement action.
 
 ### Drawbacks
 
-- Spend-based and revenue-based factors are estimates, not measured supplier emissions.
 - Industry haircuts may not represent individual supplier operations.
 - Historical trend models can be distorted by one-time events, acquisitions, or reporting changes.
 - Scope 3 supplier data may have inconsistent boundaries across suppliers.
@@ -507,9 +494,9 @@ Recommended validation rules:
 
 ### Key assumptions
 
-- Reported emissions are preferred when present and non-negative.
-- Scope 1, Scope 2, and Scope 3 can be summed when all are present.
-- Spend and revenue factors are aligned to the same currency and period.
+- Historical and current supplier emissions are available for every supplier.
+- Supplied emissions are non-negative and aligned to the reporting period.
+- Spend and revenue values are aligned to the same currency and period when used for intensity.
 - Target reduction percentages are expressed as decimals, for example `0.42` for 42%.
 - Linear glide paths are acceptable for annual planning unless a science-based nonlinear pathway is provided.
 - Latest historical emissions are the starting point for forward forecasts.

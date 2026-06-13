@@ -3,10 +3,10 @@ Supply Chain Emissions Forecasting Model
 
 This script creates a supplier-level emissions forecasting framework that can be
 implemented in Python, Excel, and Qlik Sense. It can either generate synthetic
-sample data or read prepared CSV files, calculates total emissions using a
-prioritized fallback hierarchy, selects a forecasting method, builds annual glide
-paths, scores confidence, categorizes supplier risk, and exports CSV/XLSX
-datasets for analytics and dashboarding.
+sample data or read prepared CSV files, validates complete historical and current
+emissions inputs, selects a forecasting method, builds annual glide paths, scores
+confidence, categorizes supplier risk, and exports CSV/XLSX datasets for
+analytics and dashboarding.
 """
 
 from __future__ import annotations
@@ -45,7 +45,7 @@ def bounded(value: float, lower: float, upper: float) -> float:
 
 
 def generate_industry_haircut_table(rng: np.random.Generator) -> pd.DataFrame:
-    """Create industry fallback targets and emission factors."""
+    """Create industry-level target pathways and benchmark factors."""
     rows = []
     for industry in INDUSTRIES:
         has_industry_pathway = industry not in {"Agriculture", "Professional Services"}
@@ -165,20 +165,6 @@ def generate_historical_emissions(
 
             reported_emissions = model_emissions * float(rng.normal(1.0, 0.04))
 
-            # Missingness is intentional so the fallback logic is exercised.
-            if rng.random() < 0.28:
-                reported_emissions = np.nan
-            if rng.random() < 0.18:
-                scope1 = np.nan
-            if rng.random() < 0.20:
-                scope2 = np.nan
-            if rng.random() < 0.22:
-                scope3 = np.nan
-            if rng.random() < 0.07:
-                spend = np.nan
-            if rng.random() < 0.08:
-                revenue = np.nan
-
             target = target_lookup.get(supplier["Supplier_ID"], {})
             rows.append(
                 {
@@ -189,6 +175,9 @@ def generate_historical_emissions(
                     "Gross_Spend": round(float(spend), 2) if not pd.isna(spend) else np.nan,
                     "Revenue": round(float(revenue), 2) if not pd.isna(revenue) else np.nan,
                     "Reported_Emissions": round(float(reported_emissions), 4)
+                    if not pd.isna(reported_emissions)
+                    else np.nan,
+                    "Total_Emission_Value": round(float(reported_emissions), 4)
                     if not pd.isna(reported_emissions)
                     else np.nan,
                     "Scope1_Emission": round(float(scope1), 4) if not pd.isna(scope1) else np.nan,
@@ -225,81 +214,23 @@ def create_sample_data(seed: int, supplier_count: int) -> Tuple[pd.DataFrame, pd
     return supplier_master, historical_emissions, supplier_targets, industry_table
 
 
-def calculate_total_emission(row: pd.Series) -> pd.Series:
-    """
-    Calculate Total_Emission_Value using the required priority hierarchy.
-
-    Priority 1: Supplier reported emissions.
-    Priority 2: Scope 1 + Scope 2 + Scope 3.
-    Priority 3: Spend x spend-based emission factor.
-    Priority 4: Revenue x revenue-based emission intensity.
-    Priority 5: Industry average or haircut estimate.
-    Priority 6: Missing data.
-    """
+def validate_emission_input(row: pd.Series) -> pd.Series:
+    """Validate complete historical/current emissions supplied by the source data."""
     missing_parameters = []
-    total_emissions = np.nan
-    emission_source = "Missing Data"
-    fallback_applied = False
+    supplied_total = row.get("Total_Emission_Value")
+    reported = row.get("Reported_Emissions")
+    total_emissions = supplied_total if not pd.isna(supplied_total) else reported
+    emission_source = "Provided Total Emissions" if not pd.isna(supplied_total) else "Supplier Reported Emissions"
+    emissions_available = not pd.isna(total_emissions)
     data_quality = "Missing"
     confidence = 0.0
 
-    reported = row.get("Reported_Emissions")
-    scope_values = [row.get("Scope1_Emission"), row.get("Scope2_Emission"), row.get("Scope3_Emission")]
-    spend = row.get("Gross_Spend")
-    spend_factor = row.get("Spend_Based_Emission_Factor")
-    revenue = row.get("Revenue")
-    revenue_intensity = row.get("Revenue_Based_Emission_Intensity")
-    industry_factor = row.get("Industry_Emission_Factor")
-
-    if not pd.isna(reported) and reported >= 0:
-        total_emissions = reported
-        emission_source = "Supplier Reported Emissions"
+    if emissions_available and total_emissions >= 0:
         data_quality = "High"
         confidence = 0.95
-    elif all(not pd.isna(value) for value in scope_values):
-        total_emissions = sum(scope_values)
-        emission_source = "Scope 1 + Scope 2 + Scope 3"
-        fallback_applied = True
-        data_quality = "High"
-        confidence = 0.88
-    elif not pd.isna(spend) and not pd.isna(spend_factor):
-        total_emissions = spend * spend_factor
-        emission_source = "Spend-Based Estimate"
-        fallback_applied = True
-        data_quality = "Medium"
-        confidence = 0.70
-    elif not pd.isna(revenue) and not pd.isna(revenue_intensity):
-        total_emissions = revenue * revenue_intensity
-        emission_source = "Revenue-Based Estimate"
-        fallback_applied = True
-        data_quality = "Medium-Low"
-        confidence = 0.60
-    elif not pd.isna(industry_factor):
-        activity_proxy = spend if not pd.isna(spend) else revenue
-        if not pd.isna(activity_proxy):
-            scale_factor = 1_000_000
-            total_emissions = industry_factor * (activity_proxy / scale_factor)
-            emission_source = "Industry Haircut Estimate"
-            fallback_applied = True
-            data_quality = "Low"
-            confidence = 0.45
-        else:
-            missing_parameters.extend(["Gross_Spend", "Revenue"])
-    else:
-        missing_parameters.append("Industry_Emission_Factor")
 
-    if pd.isna(reported):
-        missing_parameters.append("Reported_Emissions")
-    if any(pd.isna(value) for value in scope_values):
-        missing_parameters.append("Scope_Emissions")
-    if pd.isna(spend):
-        missing_parameters.append("Gross_Spend")
-    if pd.isna(spend_factor):
-        missing_parameters.append("Spend_Based_Emission_Factor")
-    if pd.isna(revenue):
-        missing_parameters.append("Revenue")
-    if pd.isna(revenue_intensity):
-        missing_parameters.append("Revenue_Based_Emission_Intensity")
+    if pd.isna(supplied_total) and pd.isna(reported):
+        missing_parameters.append("Total_Emission_Value")
 
     validation_flag = "Valid"
     if pd.isna(total_emissions):
@@ -313,7 +244,7 @@ def calculate_total_emission(row: pd.Series) -> pd.Series:
         {
             "Total_Emission_Value": round(float(total_emissions), 4) if not pd.isna(total_emissions) else np.nan,
             "Emission_Source_Flag": emission_source,
-            "Fallback_Applied_Flag": bool(fallback_applied),
+            "Emissions_Data_Available_Flag": bool(emissions_available),
             "Data_Quality_Flag": data_quality,
             "Missing_Parameter_Flag": "; ".join(sorted(set(missing_parameters))) if missing_parameters else "None",
             "Base_Confidence_Score": round(float(confidence), 4),
@@ -323,9 +254,12 @@ def calculate_total_emission(row: pd.Series) -> pd.Series:
 
 
 def add_total_emission_calculations(historical_emissions: pd.DataFrame) -> pd.DataFrame:
-    """Apply total emission fallback logic to every supplier-year record."""
-    calculated = historical_emissions.apply(calculate_total_emission, axis=1)
-    return pd.concat([historical_emissions.copy(), calculated], axis=1)
+    """Validate source-provided emissions for every supplier-year record."""
+    source_history = historical_emissions.copy()
+    if "Total_Emission_Value" in source_history.columns:
+        source_history = source_history.drop(columns=["Total_Emission_Value"])
+    calculated = historical_emissions.apply(validate_emission_input, axis=1)
+    return pd.concat([source_history, calculated], axis=1)
 
 
 def compute_supplier_metrics(enriched_history: pd.DataFrame) -> pd.DataFrame:
@@ -559,7 +493,7 @@ def build_forecast_output(
                     "Revenue": latest.get("Revenue"),
                     "Total_Emission_Value": latest.get("Total_Emission_Value"),
                     "Emission_Source_Flag": latest.get("Emission_Source_Flag"),
-                    "Fallback_Applied_Flag": latest.get("Fallback_Applied_Flag"),
+                    "Emissions_Data_Available_Flag": latest.get("Emissions_Data_Available_Flag"),
                     "Data_Quality_Flag": latest.get("Data_Quality_Flag"),
                     "Missing_Parameter_Flag": latest.get("Missing_Parameter_Flag"),
                     "Validation_Flag": latest.get("Validation_Flag"),
@@ -580,25 +514,25 @@ def create_data_dictionary() -> pd.DataFrame:
     rows = [
         ("Supplier_ID", "Unique supplier key", "String", "ERP / Supplier master", "Mandatory", "Joins datasets", "Primary grouping key", "SUP-0001"),
         ("Supplier_Name", "Legal or reporting supplier name", "String", "ERP / Supplier master", "Mandatory", "Supplier reporting", "Dashboard label", "Electronics Supplier 001"),
-        ("Supplier_Industry", "Supplier industry category", "String", "Supplier master / Taxonomy", "Mandatory", "Benchmarking and fallback targets", "Enables industry haircut pathway", "Electronics"),
+        ("Supplier_Industry", "Supplier industry category", "String", "Supplier master / Taxonomy", "Mandatory", "Benchmarking and industry targets", "Enables industry pathway", "Electronics"),
         ("Supplier_Year", "Historical reporting year", "Integer", "ERP / ESG data lake", "Mandatory", "Time series analysis", "Trend and baseline selection", "2024"),
-        ("Gross_Spend", "Annual procurement spend", "Decimal", "ERP / Procurement", "Optional", "Spend-based emissions estimate", "Fallback calculation and intensity", "2500000"),
-        ("Revenue", "Supplier revenue attributable or total revenue", "Decimal", "Supplier survey / Finance", "Optional", "Revenue-based intensity estimate", "Fallback calculation", "12000000"),
-        ("Reported_Emissions", "Supplier reported total emissions", "Decimal", "CDP / Supplier portal", "Optional", "Preferred emissions source", "Highest confidence total", "1850.75"),
-        ("Scope1_Emission", "Direct emissions", "Decimal", "Supplier ESG report", "Optional", "Scope-level rollup", "Second priority fallback", "120.5"),
-        ("Scope2_Emission", "Purchased energy emissions", "Decimal", "Supplier ESG report", "Optional", "Scope-level rollup", "Second priority fallback", "80.2"),
-        ("Scope3_Emission", "Supplier value-chain emissions", "Decimal", "Supplier ESG report", "Optional", "Scope-level rollup", "Second priority fallback", "1650.1"),
+        ("Gross_Spend", "Annual procurement spend", "Decimal", "ERP / Procurement", "Optional", "Intensity and growth analysis", "Denominator for intensity and growth", "2500000"),
+        ("Revenue", "Supplier revenue attributable or total revenue", "Decimal", "Supplier survey / Finance", "Optional", "Financial context and intensity analysis", "Optional denominator or filter", "12000000"),
+        ("Reported_Emissions", "Supplier reported total emissions", "Decimal", "CDP / Supplier portal", "Mandatory", "Historical/current emissions input", "Core model input", "1850.75"),
+        ("Total_Emission_Value", "Validated total emissions", "Decimal", "ESG data lake / Calculated validation", "Mandatory output", "Core model input", "Drives all forecasts", "1850.75"),
+        ("Scope1_Emission", "Direct emissions", "Decimal", "Supplier ESG report", "Optional", "Scope-level breakdown", "Dashboard segmentation", "120.5"),
+        ("Scope2_Emission", "Purchased energy emissions", "Decimal", "Supplier ESG report", "Optional", "Scope-level breakdown", "Dashboard segmentation", "80.2"),
+        ("Scope3_Emission", "Supplier value-chain emissions", "Decimal", "Supplier ESG report", "Optional", "Scope-level breakdown", "Dashboard segmentation", "1650.1"),
         ("Baseline_Year", "Supplier target baseline year", "Integer", "Supplier target table", "Optional", "Target pathway anchor", "Defines baseline emission", "2020"),
         ("Target_Year", "Supplier target completion year", "Integer", "Supplier target table", "Optional", "Target pathway endpoint", "Forecast endpoint", "2030"),
         ("Target_Reduction_Percentage", "Supplier target reduction from baseline", "Decimal", "Supplier target table", "Optional", "Supplier-specific target", "Target emission formula", "0.42"),
         ("Interim_Target_Reduction_Percentage", "Interim reduction target", "Decimal", "Supplier target table", "Optional", "Midpoint governance", "Can support milestone dashboard", "0.21"),
-        ("Industry_Baseline_Year", "Industry baseline year", "Integer", "Industry benchmark table", "Optional", "Fallback pathway anchor", "Industry pathway", "2019"),
-        ("Industry_Target_Year", "Industry target year", "Integer", "Industry benchmark table", "Optional", "Fallback pathway endpoint", "Industry pathway", "2035"),
-        ("Industry_Reduction_Percentage", "Industry reduction haircut", "Decimal", "Benchmark / ESG scenario", "Optional", "Fallback reduction target", "Industry pathway", "0.35"),
-        ("Industry_Emission_Factor", "Average industry emissions factor", "Decimal", "LCA / EEIO factor database", "Optional", "Last-resort estimate", "Fallback source", "420.5"),
-        ("Spend_Based_Emission_Factor", "Emissions per currency spend", "Decimal", "EEIO / Procurement factor table", "Optional", "Spend-based estimate", "Fallback source", "0.00045"),
-        ("Revenue_Based_Emission_Intensity", "Emissions per currency revenue", "Decimal", "Benchmark / ESG data", "Optional", "Revenue-based estimate", "Fallback source", "0.00021"),
-        ("Total_Emission_Value", "Best available calculated total emissions", "Decimal", "Calculated", "Mandatory output", "Core model input", "Drives all forecasts", "1500.42"),
+        ("Industry_Baseline_Year", "Industry baseline year", "Integer", "Industry benchmark table", "Optional", "Industry pathway anchor", "Industry pathway", "2019"),
+        ("Industry_Target_Year", "Industry target year", "Integer", "Industry benchmark table", "Optional", "Industry pathway endpoint", "Industry pathway", "2035"),
+        ("Industry_Reduction_Percentage", "Industry reduction haircut", "Decimal", "Benchmark / ESG scenario", "Optional", "Industry reduction target", "Industry pathway", "0.35"),
+        ("Industry_Emission_Factor", "Average industry emissions factor", "Decimal", "LCA / EEIO factor database", "Optional", "Benchmarking context", "Dashboard benchmark, not core emissions input", "420.5"),
+        ("Spend_Based_Emission_Factor", "Emissions per currency spend", "Decimal", "EEIO / Procurement factor table", "Optional", "Benchmarking context", "Not required when actual emissions exist", "0.00045"),
+        ("Revenue_Based_Emission_Intensity", "Emissions per currency revenue", "Decimal", "Benchmark / ESG data", "Optional", "Benchmarking context", "Not required when actual emissions exist", "0.00021"),
         ("Forecast_Method_Flag", "Selected forecasting method", "String", "Calculated", "Mandatory output", "Governance transparency", "Explains forecast basis", "Supplier Target Pathway"),
         ("Confidence_Score", "0-1 confidence score", "Decimal", "Calculated", "Mandatory output", "Risk and audit context", "Weights data reliability", "0.86"),
     ]
@@ -620,7 +554,10 @@ def create_data_dictionary() -> pd.DataFrame:
 def create_formula_dictionary() -> pd.DataFrame:
     """Create Excel-style formulas for calculated parameters."""
     rows = [
-        ("Total_Emission_Value", '=IF([@[Reported_Emissions]]<>"",[@[Reported_Emissions]],IF(AND([@[Scope1_Emission]]<>"",[@[Scope2_Emission]]<>"",[@[Scope3_Emission]]<>""),[@[Scope1_Emission]]+[@[Scope2_Emission]]+[@[Scope3_Emission]],IF(AND([@[Gross_Spend]]<>"",[@[Spend_Based_Emission_Factor]]<>""),[@[Gross_Spend]]*[@[Spend_Based_Emission_Factor]],IF(AND([@[Revenue]]<>"",[@[Revenue_Based_Emission_Intensity]]<>""),[@[Revenue]]*[@[Revenue_Based_Emission_Intensity]],IF([@[Industry_Emission_Factor]]<>"",[@[Industry_Emission_Factor]],"Missing Data")))))'),
+        ("Total_Emission_Value", '=IF([@[Source_Total_Emission_Value]]<>"",[@[Source_Total_Emission_Value]],IF([@[Reported_Emissions]]<>"",[@[Reported_Emissions]],"Missing Emissions"))'),
+        ("Emissions_Data_Available_Flag", '=IF([@[Total_Emission_Value]]<>"",TRUE,FALSE)'),
+        ("Data_Quality_Flag", '=IF([@[Total_Emission_Value]]<>"","High","Missing")'),
+        ("Confidence_Score", '=IF([@[Total_Emission_Value]]<>"",0.95,0)'),
         ("Emission_Intensity", '=IFERROR([@[Forecast_Emission]]/[@[Gross_Spend]],"")'),
         ("Target_Emission", '=[@[Baseline_Emission]]*(1-[@[Target_Reduction_Percentage]])'),
         ("Annual_Reduction_Required", '=IFERROR(([@[Baseline_Emission]]-[@[Target_Emission]])/([@[Target_Year]]-[@[Baseline_Year]]),0)'),
@@ -712,7 +649,7 @@ def build_model(args: argparse.Namespace) -> None:
         supplier_count=args.suppliers,
     )
 
-    # Step 2: Calculate total emissions and audit flags using fallback logic.
+    # Step 2: Validate the complete historical/current emissions input.
     enriched_history = add_total_emission_calculations(historical_emissions)
 
     # Step 3: Build supplier-level forecasts and annual glide paths.

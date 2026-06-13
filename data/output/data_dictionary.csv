@@ -1,24 +1,24 @@
 Attribute_Name,Description,Data_Type,Source_System,Mandatory_or_Optional,Business_Purpose,Model_Impact,Example_Value
 Supplier_ID,Unique supplier key,String,ERP / Supplier master,Mandatory,Joins datasets,Primary grouping key,SUP-0001
 Supplier_Name,Legal or reporting supplier name,String,ERP / Supplier master,Mandatory,Supplier reporting,Dashboard label,Electronics Supplier 001
-Supplier_Industry,Supplier industry category,String,Supplier master / Taxonomy,Mandatory,Benchmarking and fallback targets,Enables industry haircut pathway,Electronics
+Supplier_Industry,Supplier industry category,String,Supplier master / Taxonomy,Mandatory,Benchmarking and industry targets,Enables industry pathway,Electronics
 Supplier_Year,Historical reporting year,Integer,ERP / ESG data lake,Mandatory,Time series analysis,Trend and baseline selection,2024
-Gross_Spend,Annual procurement spend,Decimal,ERP / Procurement,Optional,Spend-based emissions estimate,Fallback calculation and intensity,2500000
-Revenue,Supplier revenue attributable or total revenue,Decimal,Supplier survey / Finance,Optional,Revenue-based intensity estimate,Fallback calculation,12000000
-Reported_Emissions,Supplier reported total emissions,Decimal,CDP / Supplier portal,Optional,Preferred emissions source,Highest confidence total,1850.75
-Scope1_Emission,Direct emissions,Decimal,Supplier ESG report,Optional,Scope-level rollup,Second priority fallback,120.5
-Scope2_Emission,Purchased energy emissions,Decimal,Supplier ESG report,Optional,Scope-level rollup,Second priority fallback,80.2
-Scope3_Emission,Supplier value-chain emissions,Decimal,Supplier ESG report,Optional,Scope-level rollup,Second priority fallback,1650.1
+Gross_Spend,Annual procurement spend,Decimal,ERP / Procurement,Optional,Intensity and growth analysis,Denominator for intensity and growth,2500000
+Revenue,Supplier revenue attributable or total revenue,Decimal,Supplier survey / Finance,Optional,Financial context and intensity analysis,Optional denominator or filter,12000000
+Reported_Emissions,Supplier reported total emissions,Decimal,CDP / Supplier portal,Mandatory,Historical/current emissions input,Core model input,1850.75
+Total_Emission_Value,Validated total emissions,Decimal,ESG data lake / Calculated validation,Mandatory output,Core model input,Drives all forecasts,1850.75
+Scope1_Emission,Direct emissions,Decimal,Supplier ESG report,Optional,Scope-level breakdown,Dashboard segmentation,120.5
+Scope2_Emission,Purchased energy emissions,Decimal,Supplier ESG report,Optional,Scope-level breakdown,Dashboard segmentation,80.2
+Scope3_Emission,Supplier value-chain emissions,Decimal,Supplier ESG report,Optional,Scope-level breakdown,Dashboard segmentation,1650.1
 Baseline_Year,Supplier target baseline year,Integer,Supplier target table,Optional,Target pathway anchor,Defines baseline emission,2020
 Target_Year,Supplier target completion year,Integer,Supplier target table,Optional,Target pathway endpoint,Forecast endpoint,2030
 Target_Reduction_Percentage,Supplier target reduction from baseline,Decimal,Supplier target table,Optional,Supplier-specific target,Target emission formula,0.42
 Interim_Target_Reduction_Percentage,Interim reduction target,Decimal,Supplier target table,Optional,Midpoint governance,Can support milestone dashboard,0.21
-Industry_Baseline_Year,Industry baseline year,Integer,Industry benchmark table,Optional,Fallback pathway anchor,Industry pathway,2019
-Industry_Target_Year,Industry target year,Integer,Industry benchmark table,Optional,Fallback pathway endpoint,Industry pathway,2035
-Industry_Reduction_Percentage,Industry reduction haircut,Decimal,Benchmark / ESG scenario,Optional,Fallback reduction target,Industry pathway,0.35
-Industry_Emission_Factor,Average industry emissions factor,Decimal,LCA / EEIO factor database,Optional,Last-resort estimate,Fallback source,420.5
-Spend_Based_Emission_Factor,Emissions per currency spend,Decimal,EEIO / Procurement factor table,Optional,Spend-based estimate,Fallback source,0.00045
-Revenue_Based_Emission_Intensity,Emissions per currency revenue,Decimal,Benchmark / ESG data,Optional,Revenue-based estimate,Fallback source,0.00021
-Total_Emission_Value,Best available calculated total emissions,Decimal,Calculated,Mandatory output,Core model input,Drives all forecasts,1500.42
+Industry_Baseline_Year,Industry baseline year,Integer,Industry benchmark table,Optional,Industry pathway anchor,Industry pathway,2019
+Industry_Target_Year,Industry target year,Integer,Industry benchmark table,Optional,Industry pathway endpoint,Industry pathway,2035
+Industry_Reduction_Percentage,Industry reduction haircut,Decimal,Benchmark / ESG scenario,Optional,Industry reduction target,Industry pathway,0.35
+Industry_Emission_Factor,Average industry emissions factor,Decimal,LCA / EEIO factor database,Optional,Benchmarking context,"Dashboard benchmark, not core emissions input",420.5
+Spend_Based_Emission_Factor,Emissions per currency spend,Decimal,EEIO / Procurement factor table,Optional,Benchmarking context,Not required when actual emissions exist,0.00045
+Revenue_Based_Emission_Intensity,Emissions per currency revenue,Decimal,Benchmark / ESG data,Optional,Benchmarking context,Not required when actual emissions exist,0.00021
 Forecast_Method_Flag,Selected forecasting method,String,Calculated,Mandatory output,Governance transparency,Explains forecast basis,Supplier Target Pathway
 Confidence_Score,0-1 confidence score,Decimal,Calculated,Mandatory output,Risk and audit context,Weights data reliability,0.86

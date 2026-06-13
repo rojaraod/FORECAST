@@ -1,5 +1,8 @@
 Calculated_Parameter,Excel_Structured_Formula
-Total_Emission_Value,"=IF([@[Reported_Emissions]]<>"""",[@[Reported_Emissions]],IF(AND([@[Scope1_Emission]]<>"""",[@[Scope2_Emission]]<>"""",[@[Scope3_Emission]]<>""""),[@[Scope1_Emission]]+[@[Scope2_Emission]]+[@[Scope3_Emission]],IF(AND([@[Gross_Spend]]<>"""",[@[Spend_Based_Emission_Factor]]<>""""),[@[Gross_Spend]]*[@[Spend_Based_Emission_Factor]],IF(AND([@[Revenue]]<>"""",[@[Revenue_Based_Emission_Intensity]]<>""""),[@[Revenue]]*[@[Revenue_Based_Emission_Intensity]],IF([@[Industry_Emission_Factor]]<>"""",[@[Industry_Emission_Factor]],""Missing Data"")))))"
+Total_Emission_Value,"=IF([@[Source_Total_Emission_Value]]<>"""",[@[Source_Total_Emission_Value]],IF([@[Reported_Emissions]]<>"""",[@[Reported_Emissions]],""Missing Emissions""))"
+Emissions_Data_Available_Flag,"=IF([@[Total_Emission_Value]]<>"""",TRUE,FALSE)"
+Data_Quality_Flag,"=IF([@[Total_Emission_Value]]<>"""",""High"",""Missing"")"
+Confidence_Score,"=IF([@[Total_Emission_Value]]<>"""",0.95,0)"
 Emission_Intensity,"=IFERROR([@[Forecast_Emission]]/[@[Gross_Spend]],"""")"
 Target_Emission,=[@[Baseline_Emission]]*(1-[@[Target_Reduction_Percentage]])
 Annual_Reduction_Required,"=IFERROR(([@[Baseline_Emission]]-[@[Target_Emission]])/([@[Target_Year]]-[@[Baseline_Year]]),0)"
