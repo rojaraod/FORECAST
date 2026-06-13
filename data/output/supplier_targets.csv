@@ -1,0 +1,63 @@
+Supplier_ID,Supplier_Name,Supplier_Industry,Baseline_Year,Target_Year,Target_Reduction_Percentage,Interim_Target_Reduction_Percentage,Target_Type,Target_Source
+SUP-0020,Logistics Supplier 020,Logistics,2020,2035,0.668,0.2613,Intensity,SBTi
+SUP-0095,Agriculture Supplier 095,Agriculture,2018,2040,0.4968,0.2905,Intensity,Contractual Target
+SUP-0059,Agriculture Supplier 059,Agriculture,2021,2030,0.495,0.1874,Absolute,CDP
+SUP-0021,Textiles Supplier 021,Textiles,2018,2030,0.4825,0.2517,Absolute,Supplier Survey
+SUP-0060,Electronics Supplier 060,Electronics,2020,2040,0.5996,0.2984,Absolute,Contractual Target
+SUP-0016,Metals Supplier 016,Metals,2018,2040,0.2599,0.1001,Absolute,CDP
+SUP-0004,Agriculture Supplier 004,Agriculture,2020,2040,0.5872,0.3238,Absolute,CDP
+SUP-0074,Agriculture Supplier 074,Agriculture,2020,2040,0.5813,0.2506,Absolute,Supplier Survey
+SUP-0027,Metals Supplier 027,Metals,2019,2030,0.2739,0.1728,Absolute,SBTi
+SUP-0028,Professional Supplier 028,Professional Services,2020,2035,0.5648,0.2914,Intensity,CDP
+SUP-0089,Professional Supplier 089,Professional Services,2021,2035,0.3882,0.2508,Absolute,CDP
+SUP-0078,Metals Supplier 078,Metals,2021,2040,0.2592,0.1569,Absolute,SBTi
+SUP-0043,Logistics Supplier 043,Logistics,2018,2035,0.543,0.1921,Absolute,Supplier Survey
+SUP-0011,Agriculture Supplier 011,Agriculture,2020,2040,0.3477,0.1695,Absolute,SBTi
+SUP-0045,Logistics Supplier 045,Logistics,2019,2035,0.5906,0.2263,Intensity,Contractual Target
+SUP-0061,Metals Supplier 061,Metals,2018,2040,0.342,0.2056,Absolute,Supplier Survey
+SUP-0040,Chemicals Supplier 040,Chemicals,2021,2030,0.5251,0.198,Intensity,Supplier Survey
+SUP-0033,Metals Supplier 033,Metals,2021,2030,0.3204,0.1259,Intensity,Contractual Target
+SUP-0062,Textiles Supplier 062,Textiles,2018,2030,0.5281,0.1906,Absolute,Contractual Target
+SUP-0097,Metals Supplier 097,Metals,2018,2030,0.503,0.297,Absolute,CDP
+SUP-0073,Packaging Supplier 073,Packaging,2021,2030,0.6005,0.3773,Intensity,SBTi
+SUP-0096,Agriculture Supplier 096,Agriculture,2021,2040,0.619,0.2241,Absolute,SBTi
+SUP-0072,Electronics Supplier 072,Electronics,2018,2040,0.5726,0.3086,Intensity,Supplier Survey
+SUP-0007,Chemicals Supplier 007,Chemicals,2019,2030,0.5673,0.2314,Absolute,SBTi
+SUP-0034,Logistics Supplier 034,Logistics,2020,2035,0.5058,0.1853,Absolute,Contractual Target
+SUP-0077,Packaging Supplier 077,Packaging,2018,2030,0.6421,0.3614,Absolute,CDP
+SUP-0098,Agriculture Supplier 098,Agriculture,2018,2040,0.69,0.3364,Intensity,SBTi
+SUP-0088,Packaging Supplier 088,Packaging,2019,2035,0.4862,0.1913,Intensity,Supplier Survey
+SUP-0037,Agriculture Supplier 037,Agriculture,2019,2035,0.5499,0.2996,Intensity,Supplier Survey
+SUP-0003,Electronics Supplier 003,Electronics,2018,2030,0.4542,0.214,Absolute,SBTi
+SUP-0023,Agriculture Supplier 023,Agriculture,2018,2040,0.339,0.1496,Absolute,SBTi
+SUP-0019,Metals Supplier 019,Metals,2021,2035,0.5173,0.245,Absolute,Contractual Target
+SUP-0094,Metals Supplier 094,Metals,2018,2040,0.3585,0.1294,Absolute,Supplier Survey
+SUP-0054,Chemicals Supplier 054,Chemicals,2019,2035,0.3128,0.1632,Absolute,Supplier Survey
+SUP-0070,Agriculture Supplier 070,Agriculture,2020,2035,0.5262,0.2341,Intensity,Supplier Survey
+SUP-0086,Metals Supplier 086,Metals,2019,2035,0.4157,0.2236,Absolute,Contractual Target
+SUP-0031,Professional Supplier 031,Professional Services,2020,2040,0.6432,0.4028,Absolute,Supplier Survey
+SUP-0017,Electronics Supplier 017,Electronics,2020,2035,0.5999,0.2666,Intensity,CDP
+SUP-0049,Logistics Supplier 049,Logistics,2019,2030,0.236,0.1422,Absolute,SBTi
+SUP-0082,Packaging Supplier 082,Packaging,2018,2030,0.3671,0.1475,Absolute,SBTi
+SUP-0055,Chemicals Supplier 055,Chemicals,2020,2040,0.6136,0.3724,Absolute,SBTi
+SUP-0063,Chemicals Supplier 063,Chemicals,2020,2030,0.5004,0.1931,Absolute,Supplier Survey
+SUP-0075,Metals Supplier 075,Metals,2021,2030,0.5861,0.2598,Absolute,Contractual Target
+SUP-0047,Packaging Supplier 047,Packaging,2018,2040,0.3939,0.2136,Absolute,Supplier Survey
+SUP-0090,Textiles Supplier 090,Textiles,2018,2040,0.2819,0.1127,Intensity,Supplier Survey
+SUP-0001,Professional Supplier 001,Professional Services,2021,2040,0.478,0.2876,Intensity,Supplier Survey
+SUP-0010,Packaging Supplier 010,Packaging,2018,2035,0.3963,0.1482,Intensity,CDP
+SUP-0076,Chemicals Supplier 076,Chemicals,2018,2035,0.4347,0.1718,Absolute,SBTi
+SUP-0002,Textiles Supplier 002,Textiles,2021,2040,0.3164,0.1385,Absolute,SBTi
+SUP-0051,Textiles Supplier 051,Textiles,2021,2035,0.4466,0.1676,Absolute,Contractual Target
+SUP-0071,Chemicals Supplier 071,Chemicals,2021,2040,0.5246,0.2891,Intensity,Supplier Survey
+SUP-0025,Metals Supplier 025,Metals,2020,2030,0.3833,0.1962,Absolute,Contractual Target
+SUP-0053,Electronics Supplier 053,Electronics,2021,2030,0.5843,0.3539,Absolute,CDP
+SUP-0026,Professional Supplier 026,Professional Services,2019,2040,0.4936,0.2987,Absolute,Supplier Survey
+SUP-0015,Packaging Supplier 015,Packaging,2019,2040,0.2525,0.1186,Intensity,Supplier Survey
+SUP-0087,Agriculture Supplier 087,Agriculture,2020,2035,0.2888,0.1304,Absolute,CDP
+SUP-0032,Agriculture Supplier 032,Agriculture,2018,2035,0.4241,0.1876,Absolute,Contractual Target
+SUP-0066,Electronics Supplier 066,Electronics,2020,2030,0.339,0.1901,Absolute,Supplier Survey
+SUP-0100,Textiles Supplier 100,Textiles,2021,2040,0.4388,0.2538,Intensity,Supplier Survey
+SUP-0038,Agriculture Supplier 038,Agriculture,2020,2040,0.6816,0.3985,Intensity,SBTi
+SUP-0065,Agriculture Supplier 065,Agriculture,2018,2035,0.42,0.2167,Absolute,Supplier Survey
+SUP-0080,Packaging Supplier 080,Packaging,2019,2040,0.6923,0.3022,Intensity,Contractual Target

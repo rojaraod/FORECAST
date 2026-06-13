@@ -1,0 +1,101 @@
+Supplier_ID,Supplier_Name,Supplier_Industry,Supplier_Country,Preferred_Supplier_Flag,Supplier_Status
+SUP-0001,Professional Supplier 001,Professional Services,CN,True,Active
+SUP-0002,Textiles Supplier 002,Textiles,CN,False,Active
+SUP-0003,Electronics Supplier 003,Electronics,IN,False,Strategic
+SUP-0004,Agriculture Supplier 004,Agriculture,CN,True,Active
+SUP-0005,Professional Supplier 005,Professional Services,DE,True,Active
+SUP-0006,Agriculture Supplier 006,Agriculture,UK,False,Active
+SUP-0007,Chemicals Supplier 007,Chemicals,UK,True,Active
+SUP-0008,Electronics Supplier 008,Electronics,DE,True,Active
+SUP-0009,Professional Supplier 009,Professional Services,CN,False,Strategic
+SUP-0010,Packaging Supplier 010,Packaging,MX,False,Active
+SUP-0011,Agriculture Supplier 011,Agriculture,IN,True,Active
+SUP-0012,Textiles Supplier 012,Textiles,DE,True,Strategic
+SUP-0013,Electronics Supplier 013,Electronics,DE,True,Active
+SUP-0014,Textiles Supplier 014,Textiles,IN,False,Active
+SUP-0015,Packaging Supplier 015,Packaging,UK,False,Active
+SUP-0016,Metals Supplier 016,Metals,UK,True,Active
+SUP-0017,Electronics Supplier 017,Electronics,US,False,Active
+SUP-0018,Professional Supplier 018,Professional Services,DE,True,Active
+SUP-0019,Metals Supplier 019,Metals,MX,True,Active
+SUP-0020,Logistics Supplier 020,Logistics,IN,False,Active
+SUP-0021,Textiles Supplier 021,Textiles,US,True,Watchlist
+SUP-0022,Chemicals Supplier 022,Chemicals,JP,False,Active
+SUP-0023,Agriculture Supplier 023,Agriculture,JP,False,Active
+SUP-0024,Agriculture Supplier 024,Agriculture,CN,True,Active
+SUP-0025,Metals Supplier 025,Metals,JP,True,Active
+SUP-0026,Professional Supplier 026,Professional Services,IN,False,Active
+SUP-0027,Metals Supplier 027,Metals,UK,False,Active
+SUP-0028,Professional Supplier 028,Professional Services,CN,False,Active
+SUP-0029,Electronics Supplier 029,Electronics,MX,True,Active
+SUP-0030,Agriculture Supplier 030,Agriculture,US,True,Active
+SUP-0031,Professional Supplier 031,Professional Services,DE,True,Active
+SUP-0032,Agriculture Supplier 032,Agriculture,DE,False,Active
+SUP-0033,Metals Supplier 033,Metals,IN,False,Active
+SUP-0034,Logistics Supplier 034,Logistics,JP,True,Strategic
+SUP-0035,Electronics Supplier 035,Electronics,US,True,Active
+SUP-0036,Metals Supplier 036,Metals,JP,False,Active
+SUP-0037,Agriculture Supplier 037,Agriculture,IN,True,Active
+SUP-0038,Agriculture Supplier 038,Agriculture,CN,True,Strategic
+SUP-0039,Electronics Supplier 039,Electronics,JP,True,Active
+SUP-0040,Chemicals Supplier 040,Chemicals,US,False,Active
+SUP-0041,Logistics Supplier 041,Logistics,MX,False,Strategic
+SUP-0042,Chemicals Supplier 042,Chemicals,US,False,Active
+SUP-0043,Logistics Supplier 043,Logistics,US,False,Active
+SUP-0044,Chemicals Supplier 044,Chemicals,UK,False,Active
+SUP-0045,Logistics Supplier 045,Logistics,JP,True,Active
+SUP-0046,Textiles Supplier 046,Textiles,IN,False,Active
+SUP-0047,Packaging Supplier 047,Packaging,US,True,Watchlist
+SUP-0048,Logistics Supplier 048,Logistics,JP,False,Strategic
+SUP-0049,Logistics Supplier 049,Logistics,JP,True,Active
+SUP-0050,Electronics Supplier 050,Electronics,UK,False,Active
+SUP-0051,Textiles Supplier 051,Textiles,US,False,Active
+SUP-0052,Electronics Supplier 052,Electronics,JP,True,Active
+SUP-0053,Electronics Supplier 053,Electronics,UK,True,Active
+SUP-0054,Chemicals Supplier 054,Chemicals,BR,False,Active
+SUP-0055,Chemicals Supplier 055,Chemicals,IN,False,Watchlist
+SUP-0056,Metals Supplier 056,Metals,BR,True,Active
+SUP-0057,Logistics Supplier 057,Logistics,DE,True,Active
+SUP-0058,Textiles Supplier 058,Textiles,US,True,Active
+SUP-0059,Agriculture Supplier 059,Agriculture,BR,True,Strategic
+SUP-0060,Electronics Supplier 060,Electronics,MX,False,Active
+SUP-0061,Metals Supplier 061,Metals,US,False,Active
+SUP-0062,Textiles Supplier 062,Textiles,IN,True,Active
+SUP-0063,Chemicals Supplier 063,Chemicals,JP,True,Strategic
+SUP-0064,Metals Supplier 064,Metals,US,False,Active
+SUP-0065,Agriculture Supplier 065,Agriculture,US,True,Active
+SUP-0066,Electronics Supplier 066,Electronics,JP,False,Watchlist
+SUP-0067,Professional Supplier 067,Professional Services,UK,True,Strategic
+SUP-0068,Agriculture Supplier 068,Agriculture,US,True,Strategic
+SUP-0069,Chemicals Supplier 069,Chemicals,UK,True,Active
+SUP-0070,Agriculture Supplier 070,Agriculture,BR,False,Active
+SUP-0071,Chemicals Supplier 071,Chemicals,CN,True,Active
+SUP-0072,Electronics Supplier 072,Electronics,MX,False,Active
+SUP-0073,Packaging Supplier 073,Packaging,DE,True,Active
+SUP-0074,Agriculture Supplier 074,Agriculture,UK,True,Active
+SUP-0075,Metals Supplier 075,Metals,BR,True,Strategic
+SUP-0076,Chemicals Supplier 076,Chemicals,IN,True,Strategic
+SUP-0077,Packaging Supplier 077,Packaging,DE,True,Active
+SUP-0078,Metals Supplier 078,Metals,US,True,Active
+SUP-0079,Logistics Supplier 079,Logistics,DE,True,Active
+SUP-0080,Packaging Supplier 080,Packaging,MX,True,Active
+SUP-0081,Textiles Supplier 081,Textiles,BR,False,Strategic
+SUP-0082,Packaging Supplier 082,Packaging,US,True,Active
+SUP-0083,Logistics Supplier 083,Logistics,DE,False,Active
+SUP-0084,Chemicals Supplier 084,Chemicals,US,True,Active
+SUP-0085,Textiles Supplier 085,Textiles,US,False,Active
+SUP-0086,Metals Supplier 086,Metals,JP,True,Strategic
+SUP-0087,Agriculture Supplier 087,Agriculture,JP,False,Strategic
+SUP-0088,Packaging Supplier 088,Packaging,UK,False,Strategic
+SUP-0089,Professional Supplier 089,Professional Services,DE,True,Active
+SUP-0090,Textiles Supplier 090,Textiles,UK,True,Active
+SUP-0091,Professional Supplier 091,Professional Services,MX,True,Active
+SUP-0092,Metals Supplier 092,Metals,CN,True,Active
+SUP-0093,Chemicals Supplier 093,Chemicals,IN,True,Active
+SUP-0094,Metals Supplier 094,Metals,CN,False,Active
+SUP-0095,Agriculture Supplier 095,Agriculture,JP,False,Active
+SUP-0096,Agriculture Supplier 096,Agriculture,IN,True,Strategic
+SUP-0097,Metals Supplier 097,Metals,MX,False,Active
+SUP-0098,Agriculture Supplier 098,Agriculture,MX,True,Active
+SUP-0099,Electronics Supplier 099,Electronics,DE,False,Strategic
+SUP-0100,Textiles Supplier 100,Textiles,DE,False,Active

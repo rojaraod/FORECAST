@@ -1,0 +1,27 @@
+Calculated_Parameter,Excel_Structured_Formula
+Total_Emission_Value,"=IF([@[Source_Total_Emission_Value]]<>"""",[@[Source_Total_Emission_Value]],IF([@[Reported_Emissions]]<>"""",[@[Reported_Emissions]],""Missing Emissions""))"
+Emissions_Data_Available_Flag,"=IF([@[Total_Emission_Value]]<>"""",TRUE,FALSE)"
+Data_Quality_Flag,"=IF([@[Total_Emission_Value]]<>"""",""High"",""Missing"")"
+Confidence_Score,"=IF([@[Total_Emission_Value]]<>"""",0.95,0)"
+Spend_Based_Emission,"=IFERROR([@[Gross_Spend]]*[@[Spend_Based_Emission_Factor]],"""")"
+Revenue_Based_Emission,"=IFERROR([@[Revenue]]*[@[Revenue_Based_Emission_Intensity]],"""")"
+Spend_Based_vs_Actual,"=IFERROR([@[Spend_Based_Emission]]-[@[Total_Emission_Value]],"""")"
+Revenue_Based_vs_Actual,"=IFERROR([@[Revenue_Based_Emission]]-[@[Total_Emission_Value]],"""")"
+Spend_Based_Variance_Percentage,"=IFERROR([@[Spend_Based_vs_Actual]]/[@[Total_Emission_Value]],"""")"
+Revenue_Based_Variance_Percentage,"=IFERROR([@[Revenue_Based_vs_Actual]]/[@[Total_Emission_Value]],"""")"
+Emission_Intensity,"=IFERROR([@[Forecast_Emission]]/[@[Gross_Spend]],"""")"
+Target_Emission,=[@[Baseline_Emission]]*(1-[@[Target_Reduction_Percentage]])
+Annual_Reduction_Required,"=IFERROR(([@[Baseline_Emission]]-[@[Target_Emission]])/([@[Target_Year]]-[@[Baseline_Year]]),0)"
+Forecast_Emission,"=IF([@[Forecast_Method_Flag]]=""Historical Trend Pathway"",[@[Total_Emission_Value]]*(1+[@[Historical_Trend]])^([@[Forecast_Year]]-[@[Supplier_Year]]),[@[Glide_Path_Emission]])"
+Glide_Path_Emission,"=MAX([@[Target_Emission]],[@[Baseline_Emission]]-[@[Annual_Reduction_Required]]*([@[Forecast_Year]]-[@[Baseline_Year]]))"
+Absolute_Reduction,=[@[Baseline_Emission]]-[@[Forecast_Emission]]
+Intensity_Reduction,"=IFERROR(([@[Baseline_Intensity]]-[@[Emission_Intensity]])/[@[Baseline_Intensity]],"""")"
+Gap_to_Target,=[@[Forecast_Emission]]-[@[Target_Emission]]
+YoY_Change,"=IFERROR(([@[Forecast_Emission]]-OFFSET([@[Forecast_Emission]],-1,0))/OFFSET([@[Forecast_Emission]],-1,0),"""")"
+CAGR,"=IFERROR(([@[Forecast_Emission]]/[@[Baseline_Emission]])^(1/([@[Forecast_Year]]-[@[Baseline_Year]]))-1,"""")"
+Supplier_Growth_Projection,"=IFERROR(([@[Current_Spend]]/[@[Baseline_Spend]])^(1/([@[Supplier_Year]]-[@[Baseline_Year]]))-1,"""")"
+Carbon_Budget_Remaining,=[@[Target_Carbon_Budget]]-[@[Cumulative_Emissions]]
+Cumulative_Emissions,"=SUMIFS([Forecast_Emission],[Supplier_ID],[@[Supplier_ID]],[Forecast_Year],""<=""&[@[Forecast_Year]])"
+MAPE,=AVERAGE(ABS((Actual_Range-Forecast_Range)/Actual_Range))
+RMSE,=SQRT(AVERAGE((Actual_Range-Forecast_Range)^2))
+R2,"=1-(SUMXMY2(Actual_Range,Forecast_Range)/DEVSQ(Actual_Range))"

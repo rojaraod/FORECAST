@@ -1,0 +1,30 @@
+Attribute_Name,Description,Data_Type,Source_System,Mandatory_or_Optional,Business_Purpose,Model_Impact,Example_Value
+Supplier_ID,Unique supplier key,String,ERP / Supplier master,Mandatory,Joins datasets,Primary grouping key,SUP-0001
+Supplier_Name,Legal or reporting supplier name,String,ERP / Supplier master,Mandatory,Supplier reporting,Dashboard label,Electronics Supplier 001
+Supplier_Industry,Supplier industry category,String,Supplier master / Taxonomy,Mandatory,Benchmarking and industry targets,Enables industry pathway,Electronics
+Supplier_Year,Historical reporting year,Integer,ERP / ESG data lake,Mandatory,Time series analysis,Trend and baseline selection,2024
+Gross_Spend,Annual procurement spend,Decimal,ERP / Procurement,Optional,Intensity and growth analysis,Denominator for intensity and growth,2500000
+Revenue,Supplier revenue attributable or total revenue,Decimal,Supplier survey / Finance,Optional,Financial context and intensity analysis,Optional denominator or filter,12000000
+Reported_Emissions,Supplier reported total emissions,Decimal,CDP / Supplier portal,Mandatory,Historical/current emissions input,Core model input,1850.75
+Total_Emission_Value,Validated total emissions,Decimal,ESG data lake / Calculated validation,Mandatory output,Core model input,Drives all forecasts,1850.75
+Scope1_Emission,Direct emissions,Decimal,Supplier ESG report,Optional,Scope-level breakdown,Dashboard segmentation,120.5
+Scope2_Emission,Purchased energy emissions,Decimal,Supplier ESG report,Optional,Scope-level breakdown,Dashboard segmentation,80.2
+Scope3_Emission,Supplier value-chain emissions,Decimal,Supplier ESG report,Optional,Scope-level breakdown,Dashboard segmentation,1650.1
+Baseline_Year,Supplier target baseline year,Integer,Supplier target table,Optional,Target pathway anchor,Defines baseline emission,2020
+Target_Year,Supplier target completion year,Integer,Supplier target table,Optional,Target pathway endpoint,Forecast endpoint,2030
+Target_Reduction_Percentage,Supplier target reduction from baseline,Decimal,Supplier target table,Optional,Supplier-specific target,Target emission formula,0.42
+Interim_Target_Reduction_Percentage,Interim reduction target,Decimal,Supplier target table,Optional,Midpoint governance,Can support milestone dashboard,0.21
+Industry_Baseline_Year,Industry baseline year,Integer,Industry benchmark table,Optional,Industry pathway anchor,Industry pathway,2019
+Industry_Target_Year,Industry target year,Integer,Industry benchmark table,Optional,Industry pathway endpoint,Industry pathway,2035
+Industry_Reduction_Percentage,Industry reduction haircut,Decimal,Benchmark / ESG scenario,Optional,Industry reduction target,Industry pathway,0.35
+Industry_Emission_Factor,Average industry emissions factor,Decimal,LCA / EEIO factor database,Optional,Benchmarking context,"Dashboard benchmark, not core emissions input",420.5
+Spend_Based_Emission_Factor,Emissions per currency spend,Decimal,EEIO / Procurement factor table,Optional,Benchmarking context,Not required when actual emissions exist,0.00045
+Revenue_Based_Emission_Intensity,Emissions per currency revenue,Decimal,Benchmark / ESG data,Optional,Benchmarking context,Not required when actual emissions exist,0.00021
+Spend_Based_Emission,Spend-based benchmark emissions,Decimal,Calculated,Optional output,Compare spend proxy to actual emissions,Benchmark only; does not replace actual emissions,1125.40
+Revenue_Based_Emission,Revenue-based benchmark emissions,Decimal,Calculated,Optional output,Compare revenue proxy to actual emissions,Benchmark only; does not replace actual emissions,980.10
+Spend_Based_vs_Actual,Difference between spend-based benchmark and actual emissions,Decimal,Calculated,Optional output,Triangulation and reasonableness check,Positive means spend estimate is above actual,125.40
+Revenue_Based_vs_Actual,Difference between revenue-based benchmark and actual emissions,Decimal,Calculated,Optional output,Triangulation and reasonableness check,Positive means revenue estimate is above actual,-19.90
+Spend_Based_Variance_Percentage,Spend benchmark variance divided by actual emissions,Decimal,Calculated,Optional output,Proxy accuracy review,Highlights suppliers with high proxy variance,0.1254
+Revenue_Based_Variance_Percentage,Revenue benchmark variance divided by actual emissions,Decimal,Calculated,Optional output,Proxy accuracy review,Highlights suppliers with high proxy variance,-0.0199
+Forecast_Method_Flag,Selected forecasting method,String,Calculated,Mandatory output,Governance transparency,Explains forecast basis,Supplier Target Pathway
+Confidence_Score,0-1 confidence score,Decimal,Calculated,Mandatory output,Risk and audit context,Weights data reliability,0.86
