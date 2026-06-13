@@ -362,6 +362,8 @@ The final forecast output includes:
 - Emission_Source_Flag
 - Fallback_Applied_Flag
 - Data_Quality_Flag
+- Missing_Parameter_Flag
+- Validation_Flag
 - Forecast_Method_Flag
 - Baseline_Emission
 - Target_Emission

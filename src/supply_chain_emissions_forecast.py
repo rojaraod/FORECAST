@@ -48,12 +48,17 @@ def generate_industry_haircut_table(rng: np.random.Generator) -> pd.DataFrame:
     """Create industry fallback targets and emission factors."""
     rows = []
     for industry in INDUSTRIES:
+        has_industry_pathway = industry not in {"Agriculture", "Professional Services"}
         rows.append(
             {
                 "Supplier_Industry": industry,
                 "Industry_Baseline_Year": int(rng.choice([2018, 2019, 2020])),
-                "Industry_Target_Year": int(rng.choice([2030, 2035, 2040])),
-                "Industry_Reduction_Percentage": round(float(rng.uniform(0.18, 0.55)), 4),
+                "Industry_Target_Year": int(rng.choice([2030, 2035, 2040]))
+                if has_industry_pathway
+                else np.nan,
+                "Industry_Reduction_Percentage": round(float(rng.uniform(0.18, 0.55)), 4)
+                if has_industry_pathway
+                else np.nan,
                 "Industry_Emission_Factor": round(float(rng.uniform(120, 720)), 4),
                 "Spend_Based_Emission_Factor": round(float(rng.uniform(0.00008, 0.0012)), 8),
                 "Revenue_Based_Emission_Intensity": round(float(rng.uniform(0.00005, 0.0010)), 8),
@@ -556,6 +561,8 @@ def build_forecast_output(
                     "Emission_Source_Flag": latest.get("Emission_Source_Flag"),
                     "Fallback_Applied_Flag": latest.get("Fallback_Applied_Flag"),
                     "Data_Quality_Flag": latest.get("Data_Quality_Flag"),
+                    "Missing_Parameter_Flag": latest.get("Missing_Parameter_Flag"),
+                    "Validation_Flag": latest.get("Validation_Flag"),
                     **calculated,
                     "Carbon_Budget_Remaining": round(float(carbon_budget_remaining), 4),
                     "Cumulative_Emissions": round(float(cumulative_emissions), 4),

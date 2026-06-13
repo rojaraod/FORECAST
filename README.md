@@ -29,7 +29,7 @@ requirements.txt
 
 ```bash
 pip install -r requirements.txt
-python src/supply_chain_emissions_forecast.py --output-dir data/output
+python3 src/supply_chain_emissions_forecast.py --output-dir data/output
 ```
 
 The script exports:

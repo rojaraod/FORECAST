@@ -1,0 +1,9 @@
+Supplier_Industry,Industry_Baseline_Year,Industry_Target_Year,Industry_Reduction_Percentage,Industry_Emission_Factor,Spend_Based_Emission_Factor,Revenue_Based_Emission_Intensity
+Electronics,2018,2040.0,0.3424,635.1588,0.00086105,0.00013947
+Logistics,2019,2040.0,0.4616,591.6386,0.00022349,0.00047787
+Chemicals,2019,2035.0,0.5229,506.3191,0.00100149,0.00047124
+Metals,2019,2030.0,0.3852,158.2904,0.00100695,0.00065008
+Packaging,2018,2040.0,0.3112,702.4188,0.0010803,0.00078946
+Professional Services,2020,,,400.0326,0.00012906,0.00019658
+Agriculture,2018,,,529.8294,0.00091413,0.00096913
+Textiles,2019,2030.0,0.3171,401.7335,0.00029221,0.00017343
