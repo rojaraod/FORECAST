@@ -51,3 +51,17 @@ See
 for the full business methodology, source data design, formulas, Python logic,
 Excel formulas, Qlik dashboard scope, validation checks, assumptions, risks, and
 future enhancements.
+
+## PowerPoint deck
+
+A 20-slide presentation is available at:
+
+```text
+docs/supply_chain_emissions_forecasting_20_slide_deck.pptx
+```
+
+To regenerate it:
+
+```bash
+python3 scripts/create_forecasting_presentation.py
+```
