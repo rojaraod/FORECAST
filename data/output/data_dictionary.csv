@@ -20,5 +20,11 @@ Industry_Reduction_Percentage,Industry reduction haircut,Decimal,Benchmark / ESG
 Industry_Emission_Factor,Average industry emissions factor,Decimal,LCA / EEIO factor database,Optional,Benchmarking context,"Dashboard benchmark, not core emissions input",420.5
 Spend_Based_Emission_Factor,Emissions per currency spend,Decimal,EEIO / Procurement factor table,Optional,Benchmarking context,Not required when actual emissions exist,0.00045
 Revenue_Based_Emission_Intensity,Emissions per currency revenue,Decimal,Benchmark / ESG data,Optional,Benchmarking context,Not required when actual emissions exist,0.00021
+Spend_Based_Emission,Spend-based benchmark emissions,Decimal,Calculated,Optional output,Compare spend proxy to actual emissions,Benchmark only; does not replace actual emissions,1125.40
+Revenue_Based_Emission,Revenue-based benchmark emissions,Decimal,Calculated,Optional output,Compare revenue proxy to actual emissions,Benchmark only; does not replace actual emissions,980.10
+Spend_Based_vs_Actual,Difference between spend-based benchmark and actual emissions,Decimal,Calculated,Optional output,Triangulation and reasonableness check,Positive means spend estimate is above actual,125.40
+Revenue_Based_vs_Actual,Difference between revenue-based benchmark and actual emissions,Decimal,Calculated,Optional output,Triangulation and reasonableness check,Positive means revenue estimate is above actual,-19.90
+Spend_Based_Variance_Percentage,Spend benchmark variance divided by actual emissions,Decimal,Calculated,Optional output,Proxy accuracy review,Highlights suppliers with high proxy variance,0.1254
+Revenue_Based_Variance_Percentage,Revenue benchmark variance divided by actual emissions,Decimal,Calculated,Optional output,Proxy accuracy review,Highlights suppliers with high proxy variance,-0.0199
 Forecast_Method_Flag,Selected forecasting method,String,Calculated,Mandatory output,Governance transparency,Explains forecast basis,Supplier Target Pathway
 Confidence_Score,0-1 confidence score,Decimal,Calculated,Mandatory output,Risk and audit context,Weights data reliability,0.86

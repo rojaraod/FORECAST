@@ -115,6 +115,17 @@ Total_Emission_Value =
 
 This is not a waterfall-estimation method. It is a validation rule that confirms the emissions value is present, non-negative, and reasonable before forecasting.
 
+### Supplemental benchmark calculations
+
+Because actual emissions are already available, spend-based and revenue-based emissions should be used as **benchmark and reasonableness checks**, not as replacements for actual supplier emissions.
+
+| Benchmark | Formula | Purpose | Model treatment |
+|---|---|---|---|
+| Spend-Based Emissions | `Gross_Spend x Spend_Based_Emission_Factor` | Compare procurement-spend proxy to actual emissions | Supplemental benchmark only |
+| Revenue-Based Emissions | `Revenue x Revenue_Based_Emission_Intensity` | Compare revenue-intensity proxy to actual emissions | Supplemental benchmark only |
+| Spend-Based vs Actual | `Spend_Based_Emission - Total_Emission_Value` | Identify suppliers where spend proxy diverges from actual emissions | Data quality / reasonableness check |
+| Revenue-Based vs Actual | `Revenue_Based_Emission - Total_Emission_Value` | Identify suppliers where revenue proxy diverges from actual emissions | Data quality / reasonableness check |
+
 ### Required validation flags
 
 | Flag | Purpose | Example values |
@@ -183,6 +194,21 @@ ELSE:
 | Advantages | Uses observed supplier behavior and can detect improving or worsening suppliers. |
 | Drawbacks | Past performance may not predict future changes; sensitive to outliers and missing data. |
 
+### 5.4 Spend-Based and Revenue-Based Emissions Benchmarks
+
+| Category | Spend-based emissions | Revenue-based emissions |
+|---|---|---|
+| When to use | Use as a supplemental benchmark when gross spend and spend factor are available. | Use as a supplemental benchmark when revenue and revenue intensity are available. |
+| Required inputs | Gross_Spend, Spend_Based_Emission_Factor, Total_Emission_Value. | Revenue, Revenue_Based_Emission_Intensity, Total_Emission_Value. |
+| Mathematical formula | `Spend_Based_Emission = Gross_Spend x Spend_Based_Emission_Factor`. | `Revenue_Based_Emission = Revenue x Revenue_Based_Emission_Intensity`. |
+| Excel formula | `=IFERROR([@[Gross_Spend]]*[@[Spend_Based_Emission_Factor]],"")` | `=IFERROR([@[Revenue]]*[@[Revenue_Based_Emission_Intensity]],"")` |
+| Output columns | Spend_Based_Emission, Spend_Based_vs_Actual, Spend_Based_Variance_Percentage. | Revenue_Based_Emission, Revenue_Based_vs_Actual, Revenue_Based_Variance_Percentage. |
+| Business impact | Helps Procurement test whether spend profile is directionally aligned with actual emissions. | Helps Finance and ESG test whether revenue intensity is directionally aligned with actual emissions. |
+| Advantages | Easy to scale across procurement data and useful for reasonableness checks. | Useful when supplier revenue is a better activity proxy than spend. |
+| Drawbacks | Spend can reflect inflation, price changes, or category mix rather than physical activity. | Revenue can be distorted by margins, pricing, or supplier business mix. |
+
+Important: these benchmark calculations do not override `Total_Emission_Value`. They support validation, scenario analysis, and dashboard comparisons.
+
 ---
 
 ## 6. Required Forecast Parameters
@@ -192,6 +218,9 @@ ELSE:
 | Historical Trend | Supplier emissions CAGR from historical records | Understand actual decarbonization or growth pattern |
 | Supplier Target Pathway | Forecast based on supplier's own target | Supplier accountability |
 | Industry Haircut Pathway | Forecast based on industry reduction benchmark | Used for suppliers without specific targets |
+| Spend-Based Emissions | Gross spend multiplied by spend-based factor | Benchmark actual emissions against procurement-spend proxy |
+| Revenue-Based Emissions | Revenue multiplied by revenue-based intensity | Benchmark actual emissions against revenue proxy |
+| Spend/Revenue Variance to Actual | Proxy emissions minus actual emissions | Identify unusual differences for review |
 | Absolute Emissions Reduction | Baseline emissions minus forecast emissions | Quantifies tonnes reduced |
 | Emissions Intensity Reduction | Reduction in emissions per spend or revenue | Normalizes performance for growth |
 | Supplier Growth Projection | Spend or revenue CAGR | Adjusts trend-based forecasts for supplier growth |
@@ -216,6 +245,12 @@ ELSE:
 | Calculation | Formula |
 |---|---|
 | Total Emission Value | `TE` if source total emissions are supplied; otherwise `RE`; otherwise `Missing Emissions` |
+| Spend-Based Emissions | `Spend_Based_Emission = Gross_Spend x Spend_Based_Emission_Factor` |
+| Revenue-Based Emissions | `Revenue_Based_Emission = Revenue x Revenue_Based_Emission_Intensity` |
+| Spend-Based Variance to Actual | `Spend_Based_vs_Actual = Spend_Based_Emission - Total_Emission_Value` |
+| Revenue-Based Variance to Actual | `Revenue_Based_vs_Actual = Revenue_Based_Emission - Total_Emission_Value` |
+| Spend-Based Variance % | `Spend_Based_Variance_Percentage = Spend_Based_vs_Actual / Total_Emission_Value` |
+| Revenue-Based Variance % | `Revenue_Based_Variance_Percentage = Revenue_Based_vs_Actual / Total_Emission_Value` |
 | Emission Intensity | `Emission_Intensity = Emissions / Activity`, where activity is spend or revenue |
 | Target Emission | `Target_Emission = Baseline_Emission x (1 - Reduction_Percentage)` |
 | Annual Reduction | `Annual_Reduction_Required = (Baseline_Emission - Target_Emission) / (Target_Year - Baseline_Year)` |
@@ -247,6 +282,12 @@ Assume the main Excel table is named `ForecastTable`.
 | Emissions_Data_Available_Flag | `=IF([@[Total_Emission_Value]]<>"",TRUE,FALSE)` |
 | Data_Quality_Flag | `=IF([@[Total_Emission_Value]]<>"","High","Missing")` |
 | Confidence_Score | `=IF([@[Total_Emission_Value]]<>"",0.95,0)` |
+| Spend_Based_Emission | `=IFERROR([@[Gross_Spend]]*[@[Spend_Based_Emission_Factor]],"")` |
+| Revenue_Based_Emission | `=IFERROR([@[Revenue]]*[@[Revenue_Based_Emission_Intensity]],"")` |
+| Spend_Based_vs_Actual | `=IFERROR([@[Spend_Based_Emission]]-[@[Total_Emission_Value]],"")` |
+| Revenue_Based_vs_Actual | `=IFERROR([@[Revenue_Based_Emission]]-[@[Total_Emission_Value]],"")` |
+| Spend_Based_Variance_Percentage | `=IFERROR([@[Spend_Based_vs_Actual]]/[@[Total_Emission_Value]],"")` |
+| Revenue_Based_Variance_Percentage | `=IFERROR([@[Revenue_Based_vs_Actual]]/[@[Total_Emission_Value]],"")` |
 | Forecast_Method_Flag | `=IF(AND([@[Target_Year]]<>"",[@[Target_Reduction_Percentage]]<>""),"Supplier Target Pathway",IF(AND([@[Industry_Target_Year]]<>"",[@[Industry_Reduction_Percentage]]<>""),"Industry Haircut Pathway","Historical Trend Pathway"))` |
 | Baseline_Emission | `=SUMIFS(ForecastTable[Total_Emission_Value],ForecastTable[Supplier_ID],[@[Supplier_ID]],ForecastTable[Supplier_Year],[@[Baseline_Year]])` |
 | Target_Emission | `=[@[Baseline_Emission]]*(1-[@[Target_Reduction_Percentage]])` |
@@ -289,13 +330,14 @@ It performs the following steps:
 1. Generates or reads supplier source datasets.
 2. Validates complete historical/current emissions inputs.
 3. Confirms `Total_Emission_Value` for each supplier-year record.
-4. Creates source, availability, missing parameter, validation, and quality flags.
-5. Applies supplier target pathway.
-6. Applies industry haircut pathway.
-7. Applies historical trend pathway.
-8. Calculates year-by-year glide paths.
-9. Calculates gap-to-target, absolute reduction, intensity reduction, carbon budget remaining, cumulative emissions, confidence score, supplier risk category, and target status.
-10. Exports all output datasets to CSV and a consolidated Excel workbook.
+4. Calculates spend-based and revenue-based benchmark emissions.
+5. Creates source, availability, missing parameter, validation, and quality flags.
+6. Applies supplier target pathway.
+7. Applies industry haircut pathway.
+8. Applies historical trend pathway.
+9. Calculates year-by-year glide paths.
+10. Calculates gap-to-target, absolute reduction, intensity reduction, carbon budget remaining, cumulative emissions, confidence score, supplier risk category, and target status.
+11. Exports all output datasets to CSV and a consolidated Excel workbook.
 
 ---
 
@@ -350,6 +392,14 @@ The final forecast output includes:
 - Total_Emission_Value
 - Emission_Source_Flag
 - Emissions_Data_Available_Flag
+- Historical_Trend
+- Supplier_Growth_Projection
+- Spend_Based_Emission
+- Revenue_Based_Emission
+- Spend_Based_vs_Actual
+- Revenue_Based_vs_Actual
+- Spend_Based_Variance_Percentage
+- Revenue_Based_Variance_Percentage
 - Data_Quality_Flag
 - Missing_Parameter_Flag
 - Validation_Flag
@@ -406,6 +456,8 @@ The final forecast output includes:
 | Emissions by Industry | Supplier_Industry | Forecast emissions | `Sum(Forecast_Emission)` | Sector concentration | Which industries dominate emissions? |
 | Average Intensity by Industry | Supplier_Industry | Emission intensity | `Avg(Emission_Intensity)` | Benchmark intensity | Which industries are most emissions intensive? |
 | Industry Pathway Coverage | Supplier_Industry, Forecast_Method_Flag | Supplier count | `Count(DISTINCT Supplier_ID)` | Method coverage by sector | Where are industry assumptions used most? |
+| Spend Proxy Variance | Supplier_Industry | Spend variance % | `Avg(Spend_Based_Variance_Percentage)` | Compare spend proxy to actual emissions | Which industries diverge from spend-based estimates? |
+| Revenue Proxy Variance | Supplier_Industry | Revenue variance % | `Avg(Revenue_Based_Variance_Percentage)` | Compare revenue proxy to actual emissions | Which industries diverge from revenue-based estimates? |
 
 ### 12.5 Gap-to-Target Analysis
 
@@ -437,6 +489,8 @@ The final forecast output includes:
 |---|---|---|---|---|---|
 | Quality Flag Split | Data_Quality_Flag | Record count | `Count(Supplier_ID)` | Quality monitoring | How much data is high or low quality? |
 | Emission Source Split | Emission_Source_Flag | Emissions | `Sum(Total_Emission_Value)` | Source transparency | Which direct emissions source is used? |
+| Spend vs Actual Variance | Supplier_Name | Variance | `Sum(Spend_Based_vs_Actual)` | Reasonableness check | Which suppliers differ most from spend proxy? |
+| Revenue vs Actual Variance | Supplier_Name | Variance | `Sum(Revenue_Based_vs_Actual)` | Reasonableness check | Which suppliers differ most from revenue proxy? |
 | Missing Parameters | Missing_Parameter_Flag | Record count | `Count(Supplier_ID)` | Data remediation | Which inputs should be collected first? |
 | Validation Exceptions | Validation_Flag | Record count | `Count(Supplier_ID)` | Audit controls | What records require review? |
 

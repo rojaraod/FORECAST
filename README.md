@@ -10,6 +10,8 @@ Audit teams.
 - Direct historical/current emissions validation with source, quality, validation,
   and confidence flags.
 - Supplier target, industry haircut, and historical trend forecasting pathways.
+- Supplemental spend-based and revenue-based emissions benchmarks for
+  reasonableness checks against actual supplier emissions.
 - Excel structured formula library.
 - Qlik Sense dashboard design and expressions.
 - End-to-end Python implementation that generates 1,000 sample historical

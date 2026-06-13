@@ -254,10 +254,11 @@ def create_presentation() -> None:
         slide,
         [
             ("Source data", "Supplier, activity, emissions, targets, factors", RGBColor(239, 246, 255)),
-            ("Emission input", "Use supplied historical and current emissions", RGBColor(232, 245, 245)),
+            ("Emission input", "Use supplied historical/current emissions", RGBColor(232, 245, 245)),
             ("Method select", "Supplier target, industry haircut, historical trend", RGBColor(240, 253, 244)),
-            ("Forecast", "Target emissions, glide path, gap, budget", RGBColor(255, 247, 237)),
-            ("Outputs", "CSV, Excel, Qlik dashboard, audit flags", RGBColor(254, 242, 242)),
+            ("Benchmarks", "Spend-based and revenue-based comparisons", RGBColor(255, 247, 237)),
+            ("Forecast", "Target, glide path, gap, budget", RGBColor(254, 242, 242)),
+            ("Outputs", "CSV, Excel, Qlik dashboard", RGBColor(242, 245, 248)),
         ],
         y=2.15,
     )
@@ -305,8 +306,8 @@ def create_presentation() -> None:
             ("1", "Load supplier emissions", RGBColor(220, 252, 231)),
             ("2", "Validate non-negative values", RGBColor(232, 245, 245)),
             ("3", "Check completeness", RGBColor(239, 246, 255)),
-            ("4", "Flag outliers", RGBColor(255, 247, 237)),
-            ("5", "Use in forecast", RGBColor(254, 242, 242)),
+            ("4", "Calculate proxy benchmarks", RGBColor(255, 247, 237)),
+            ("5", "Use actuals in forecast", RGBColor(254, 242, 242)),
         ],
         y=1.85,
     )
@@ -318,9 +319,10 @@ def create_presentation() -> None:
         1.55,
         [
             "The 6-level waterfall is not required because all suppliers have historical and current emissions.",
+            "Spend-based and revenue-based emissions are added as benchmark checks against actual emissions.",
             "Every record receives Emission_Source_Flag, Emissions_Data_Available_Flag, Data_Quality_Flag, Missing_Parameter_Flag, Confidence_Score, and Validation_Flag.",
         ],
-        16,
+        15,
     )
     add_footer(slide, 6)
 
@@ -447,14 +449,15 @@ def create_presentation() -> None:
         ["Parameter", "Formula"],
         [
             ["Total emission", "Use supplied Total_Emission_Value or Reported_Emissions"],
+            ["Spend-based emission", "Gross_Spend x Spend_Based_Emission_Factor"],
+            ["Revenue-based emission", "Revenue x Revenue_Based_Emission_Intensity"],
+            ["Proxy variance", "Proxy_Emission - Total_Emission_Value"],
             ["Target emission", "Baseline_Emission x (1 - Reduction_Percentage)"],
             ["Annual reduction", "(Baseline_Emission - Target_Emission) / (Target_Year - Baseline_Year)"],
             ["Glide path", "max(Target_Emission, Baseline_Emission - Annual_Reduction x Years_From_Baseline)"],
             ["Historical forecast", "Latest_Emission x (1 + Historical_CAGR)^Years_After_Latest"],
-            ["Gap to target", "Forecast_Emission - Target_Emission"],
-            ["Carbon budget remaining", "Target_Carbon_Budget - Cumulative_Emissions"],
         ],
-        10,
+        9,
     )
     add_footer(slide, 12)
 
@@ -471,10 +474,11 @@ def create_presentation() -> None:
             "Supplier identity: ID, name, industry.",
             "Time fields: supplier year, baseline year, target year, forecast year.",
             "Emissions inputs: reported emissions, total emission value, scopes, spend, revenue.",
+            "Benchmark outputs: spend-based emissions, revenue-based emissions, and variance to actuals.",
             "Audit flags: emissions source, data availability, data quality, missing parameters, validation.",
             "Forecast outputs: target, forecast, glide path, gap, budget, confidence, risk, status.",
         ],
-        16,
+        15,
     )
     add_callout(slide, 7.05, 1.55, 5.2, 1.2, "Primary metric", "Forecast_Emission by Supplier_ID and Forecast_Year", RGBColor(232, 245, 245))
     add_callout(slide, 7.05, 3.05, 5.2, 1.2, "Decision metric", "Gap_to_Target and Supplier_Risk_Category", RGBColor(255, 247, 237))
@@ -511,7 +515,7 @@ def create_presentation() -> None:
         [
             ("1", "Generate or read data", RGBColor(239, 246, 255)),
             ("2", "Validate emissions inputs", RGBColor(232, 245, 245)),
-            ("3", "Create quality and source flags", RGBColor(240, 253, 244)),
+            ("3", "Calculate spend/revenue benchmarks", RGBColor(240, 253, 244)),
             ("4", "Apply forecasts and glide paths", RGBColor(255, 247, 237)),
             ("5", "Export CSV and Excel", RGBColor(254, 242, 242)),
         ],
@@ -568,9 +572,9 @@ def create_presentation() -> None:
             ["Landing page", "KPI tiles and navigation", "What is the portfolio view?"],
             ["Executive summary", "Trend, gap, risk, budget", "Are we on track?"],
             ["Supplier trend", "Supplier forecast line, top 20", "Which suppliers drive emissions?"],
-            ["Industry benchmark", "Industry emissions and intensity", "Which sectors are highest risk?"],
+            ["Industry benchmark", "Industry emissions, intensity, spend/revenue variance", "Which sectors are highest risk or unusual?"],
             ["Gap-to-target", "Gap by supplier and year", "Where is action required?"],
-            ["Data quality", "Source, availability, missing fields", "Can we trust the data?"],
+            ["Data quality", "Source, availability, proxy variance, missing fields", "Can we trust the data?"],
             ["Risk heatmap", "Industry x risk category", "Where should Procurement engage?"],
             ["Scenario analysis", "Reduction and growth variables", "What if assumptions change?"],
         ],

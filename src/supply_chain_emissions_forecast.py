@@ -222,6 +222,30 @@ def validate_emission_input(row: pd.Series) -> pd.Series:
     total_emissions = supplied_total if not pd.isna(supplied_total) else reported
     emission_source = "Provided Total Emissions" if not pd.isna(supplied_total) else "Supplier Reported Emissions"
     emissions_available = not pd.isna(total_emissions)
+    spend = row.get("Gross_Spend")
+    spend_factor = row.get("Spend_Based_Emission_Factor")
+    revenue = row.get("Revenue")
+    revenue_intensity = row.get("Revenue_Based_Emission_Intensity")
+    spend_based_emission = (
+        spend * spend_factor if not pd.isna(spend) and not pd.isna(spend_factor) else np.nan
+    )
+    revenue_based_emission = (
+        revenue * revenue_intensity
+        if not pd.isna(revenue) and not pd.isna(revenue_intensity)
+        else np.nan
+    )
+    spend_based_variance = (
+        spend_based_emission - total_emissions
+        if not pd.isna(spend_based_emission) and not pd.isna(total_emissions)
+        else np.nan
+    )
+    revenue_based_variance = (
+        revenue_based_emission - total_emissions
+        if not pd.isna(revenue_based_emission) and not pd.isna(total_emissions)
+        else np.nan
+    )
+    spend_based_variance_percentage = safe_divide(spend_based_variance, total_emissions)
+    revenue_based_variance_percentage = safe_divide(revenue_based_variance, total_emissions)
     data_quality = "Missing"
     confidence = 0.0
 
@@ -245,6 +269,24 @@ def validate_emission_input(row: pd.Series) -> pd.Series:
             "Total_Emission_Value": round(float(total_emissions), 4) if not pd.isna(total_emissions) else np.nan,
             "Emission_Source_Flag": emission_source,
             "Emissions_Data_Available_Flag": bool(emissions_available),
+            "Spend_Based_Emission": round(float(spend_based_emission), 4)
+            if not pd.isna(spend_based_emission)
+            else np.nan,
+            "Revenue_Based_Emission": round(float(revenue_based_emission), 4)
+            if not pd.isna(revenue_based_emission)
+            else np.nan,
+            "Spend_Based_vs_Actual": round(float(spend_based_variance), 4)
+            if not pd.isna(spend_based_variance)
+            else np.nan,
+            "Revenue_Based_vs_Actual": round(float(revenue_based_variance), 4)
+            if not pd.isna(revenue_based_variance)
+            else np.nan,
+            "Spend_Based_Variance_Percentage": round(float(spend_based_variance_percentage), 6)
+            if not pd.isna(spend_based_variance_percentage)
+            else np.nan,
+            "Revenue_Based_Variance_Percentage": round(float(revenue_based_variance_percentage), 6)
+            if not pd.isna(revenue_based_variance_percentage)
+            else np.nan,
             "Data_Quality_Flag": data_quality,
             "Missing_Parameter_Flag": "; ".join(sorted(set(missing_parameters))) if missing_parameters else "None",
             "Base_Confidence_Score": round(float(confidence), 4),
@@ -494,6 +536,18 @@ def build_forecast_output(
                     "Total_Emission_Value": latest.get("Total_Emission_Value"),
                     "Emission_Source_Flag": latest.get("Emission_Source_Flag"),
                     "Emissions_Data_Available_Flag": latest.get("Emissions_Data_Available_Flag"),
+                    "Historical_Trend": supplier.get("Historical_Trend"),
+                    "Supplier_Growth_Projection": supplier.get("Supplier_Growth_Projection"),
+                    "Spend_Based_Emission": latest.get("Spend_Based_Emission"),
+                    "Revenue_Based_Emission": latest.get("Revenue_Based_Emission"),
+                    "Spend_Based_vs_Actual": latest.get("Spend_Based_vs_Actual"),
+                    "Revenue_Based_vs_Actual": latest.get("Revenue_Based_vs_Actual"),
+                    "Spend_Based_Variance_Percentage": latest.get(
+                        "Spend_Based_Variance_Percentage"
+                    ),
+                    "Revenue_Based_Variance_Percentage": latest.get(
+                        "Revenue_Based_Variance_Percentage"
+                    ),
                     "Data_Quality_Flag": latest.get("Data_Quality_Flag"),
                     "Missing_Parameter_Flag": latest.get("Missing_Parameter_Flag"),
                     "Validation_Flag": latest.get("Validation_Flag"),
@@ -533,6 +587,12 @@ def create_data_dictionary() -> pd.DataFrame:
         ("Industry_Emission_Factor", "Average industry emissions factor", "Decimal", "LCA / EEIO factor database", "Optional", "Benchmarking context", "Dashboard benchmark, not core emissions input", "420.5"),
         ("Spend_Based_Emission_Factor", "Emissions per currency spend", "Decimal", "EEIO / Procurement factor table", "Optional", "Benchmarking context", "Not required when actual emissions exist", "0.00045"),
         ("Revenue_Based_Emission_Intensity", "Emissions per currency revenue", "Decimal", "Benchmark / ESG data", "Optional", "Benchmarking context", "Not required when actual emissions exist", "0.00021"),
+        ("Spend_Based_Emission", "Spend-based benchmark emissions", "Decimal", "Calculated", "Optional output", "Compare spend proxy to actual emissions", "Benchmark only; does not replace actual emissions", "1125.40"),
+        ("Revenue_Based_Emission", "Revenue-based benchmark emissions", "Decimal", "Calculated", "Optional output", "Compare revenue proxy to actual emissions", "Benchmark only; does not replace actual emissions", "980.10"),
+        ("Spend_Based_vs_Actual", "Difference between spend-based benchmark and actual emissions", "Decimal", "Calculated", "Optional output", "Triangulation and reasonableness check", "Positive means spend estimate is above actual", "125.40"),
+        ("Revenue_Based_vs_Actual", "Difference between revenue-based benchmark and actual emissions", "Decimal", "Calculated", "Optional output", "Triangulation and reasonableness check", "Positive means revenue estimate is above actual", "-19.90"),
+        ("Spend_Based_Variance_Percentage", "Spend benchmark variance divided by actual emissions", "Decimal", "Calculated", "Optional output", "Proxy accuracy review", "Highlights suppliers with high proxy variance", "0.1254"),
+        ("Revenue_Based_Variance_Percentage", "Revenue benchmark variance divided by actual emissions", "Decimal", "Calculated", "Optional output", "Proxy accuracy review", "Highlights suppliers with high proxy variance", "-0.0199"),
         ("Forecast_Method_Flag", "Selected forecasting method", "String", "Calculated", "Mandatory output", "Governance transparency", "Explains forecast basis", "Supplier Target Pathway"),
         ("Confidence_Score", "0-1 confidence score", "Decimal", "Calculated", "Mandatory output", "Risk and audit context", "Weights data reliability", "0.86"),
     ]
@@ -558,6 +618,12 @@ def create_formula_dictionary() -> pd.DataFrame:
         ("Emissions_Data_Available_Flag", '=IF([@[Total_Emission_Value]]<>"",TRUE,FALSE)'),
         ("Data_Quality_Flag", '=IF([@[Total_Emission_Value]]<>"","High","Missing")'),
         ("Confidence_Score", '=IF([@[Total_Emission_Value]]<>"",0.95,0)'),
+        ("Spend_Based_Emission", '=IFERROR([@[Gross_Spend]]*[@[Spend_Based_Emission_Factor]],"")'),
+        ("Revenue_Based_Emission", '=IFERROR([@[Revenue]]*[@[Revenue_Based_Emission_Intensity]],"")'),
+        ("Spend_Based_vs_Actual", '=IFERROR([@[Spend_Based_Emission]]-[@[Total_Emission_Value]],"")'),
+        ("Revenue_Based_vs_Actual", '=IFERROR([@[Revenue_Based_Emission]]-[@[Total_Emission_Value]],"")'),
+        ("Spend_Based_Variance_Percentage", '=IFERROR([@[Spend_Based_vs_Actual]]/[@[Total_Emission_Value]],"")'),
+        ("Revenue_Based_Variance_Percentage", '=IFERROR([@[Revenue_Based_vs_Actual]]/[@[Total_Emission_Value]],"")'),
         ("Emission_Intensity", '=IFERROR([@[Forecast_Emission]]/[@[Gross_Spend]],"")'),
         ("Target_Emission", '=[@[Baseline_Emission]]*(1-[@[Target_Reduction_Percentage]])'),
         ("Annual_Reduction_Required", '=IFERROR(([@[Baseline_Emission]]-[@[Target_Emission]])/([@[Target_Year]]-[@[Baseline_Year]]),0)'),
