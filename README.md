@@ -54,6 +54,18 @@ for the full business methodology, source data design, formulas, Python logic,
 Excel formulas, Qlik dashboard scope, validation checks, assumptions, risks, and
 future enhancements.
 
+A Word version is available at:
+
+```text
+docs/supply_chain_emissions_forecasting_framework.docx
+```
+
+To regenerate it:
+
+```bash
+python3 scripts/create_forecasting_word_doc.py
+```
+
 ## PowerPoint deck
 
 A 20-slide presentation is available at:
