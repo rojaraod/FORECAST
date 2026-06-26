@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "1.0",
+  "schemaVersion": "1.1",
   "app": {
     "name": "Supply Chain Emissions Forecasting - What-If Analysis",
     "targetQvfFile": "Supply_Chain_Emissions_Forecasting_What_If.qvf",
@@ -9,7 +9,12 @@
   "sourceFiles": {
     "csv": "../data/supply_chain_emissions_suppliers_50.csv",
     "loadScript": "../qlik/supply_chain_emissions_what_if_model.qvs",
-    "buildGuide": "../docs/qlik_sense_supply_chain_emissions_build_guide.md"
+    "buildGuide": "../docs/qlik_sense_supply_chain_emissions_build_guide.md",
+    "theme": "../qlik/supply_chain_emissions_theme.json",
+    "objectPropertyMatrix": "../docs/qlik_sense_dashboard_object_property_matrix.md",
+    "pdfStyleReport": "../docs/supply_chain_emissions_pdf_style_report.md",
+    "defaultScenarioCsv": "../data/supply_chain_emissions_supplier_year_default_forecast.csv",
+    "scopeBreakdownCsv": "../data/supply_chain_emissions_scope_breakdown_2025.csv"
   },
   "data": {
     "connectionName": "lib://SupplyChainData",
@@ -20,7 +25,19 @@
     "supplierTargetCount": 30,
     "expertJudgementCount": 20,
     "generatedFactGrain": "SupplierID + Year",
-    "generatedFactRows": 1650
+    "generatedFactRows": 1650,
+    "supplementalData": [
+      {
+        "fileName": "supply_chain_emissions_supplier_year_default_forecast.csv",
+        "rows": 1650,
+        "grain": "SupplierID + Year + DefaultScenarioLabel"
+      },
+      {
+        "fileName": "supply_chain_emissions_scope_breakdown_2025.csv",
+        "rows": 150,
+        "grain": "SupplierID + Scope + Year"
+      }
+    ]
   },
   "theme": {
     "headerGradientStart": "#002B5C",
@@ -412,5 +429,66 @@
     "A valid .qvf binary must be saved/exported by Qlik Sense Desktop, Qlik Sense Enterprise, or Qlik Cloud.",
     "Use scripts/create_qvf_local_engine.mjs with a running local Qlik Engine to create the data-model QVF shell.",
     "Use docs/qlik_sense_supply_chain_emissions_build_guide.md and this JSON spec to create the visual sheet objects."
-  ]
+  ],
+  "dashboardDetails": {
+    "themeFile": "qlik/supply_chain_emissions_theme.json",
+    "grid": {
+      "columns": 24,
+      "rows": 14,
+      "mobileBehavior": "stack right-panel charts under the line chart and keep filters collapsible"
+    },
+    "interactions": {
+      "globalSelections": [
+        "SupplierName",
+        "Industry",
+        "ForecastMethod",
+        "Region",
+        "Country",
+        "ProductCategory"
+      ],
+      "selectionBehavior": "All dashboard visuals respond to supplier, industry, and forecast method selections.",
+      "exportEnabledObjects": [
+        "kpi_current",
+        "kpi_forecast",
+        "kpi_reduction",
+        "line_forecast",
+        "donut_method",
+        "bar_industry",
+        "year_table"
+      ]
+    },
+    "conditionalFormatting": [
+      {
+        "target": "Year table actual rows",
+        "rule": "YearStatus='Actual'",
+        "color": "#173B7A"
+      },
+      {
+        "target": "Year table forecast rows",
+        "rule": "YearStatus='Forecast'",
+        "color": "#2E7D32"
+      },
+      {
+        "target": "Reduction percentage",
+        "rule": ">= 0.30",
+        "color": "#2E7D32"
+      },
+      {
+        "target": "Reduction percentage",
+        "rule": "0.15 to 0.30",
+        "color": "#FB8C00"
+      },
+      {
+        "target": "Reduction percentage",
+        "rule": "< 0.15",
+        "color": "#EF5350"
+      }
+    ],
+    "recommendedAddOnSheets": [
+      "Supplier Detail",
+      "Industry Deep Dive",
+      "Scenario Comparison",
+      "Data Quality"
+    ]
+  }
 }

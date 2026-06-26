@@ -1,0 +1,86 @@
+{
+  "_inherit": true,
+  "_variables": {
+    "@brandDarkNavy": "#002B5C",
+    "@brandNavy": "#003D7A",
+    "@actualBlue": "#173B7A",
+    "@forecastGreen": "#43A047",
+    "@expertOrange": "#FB8C00",
+    "@cardBorder": "#E5E7EB",
+    "@sheetBackground": "#F6F8FB"
+  },
+  "color": "@actualBlue",
+  "fontFamily": "Arial, Helvetica, sans-serif",
+  "object": {
+    "title": {
+      "main": {
+        "color": "#111827",
+        "fontSize": "13px",
+        "fontWeight": "600"
+      },
+      "subTitle": {
+        "color": "#475569",
+        "fontSize": "11px"
+      }
+    },
+    "axis": {
+      "title": {
+        "color": "#334155",
+        "fontSize": "11px"
+      },
+      "label": {
+        "color": "#475569",
+        "fontSize": "10px"
+      }
+    },
+    "legend": {
+      "label": {
+        "color": "#334155",
+        "fontSize": "10px"
+      }
+    }
+  },
+  "palettes": {
+    "data": [
+      {
+        "name": "Supply chain emissions",
+        "translation": "Supply chain emissions",
+        "propertyValue": "supplyChainEmissions",
+        "type": "row",
+        "scale": [
+          {
+            "color": "#43A047"
+          },
+          {
+            "color": "#FB8C00"
+          },
+          {
+            "color": "#173B7A"
+          },
+          {
+            "color": "#7E57C2"
+          },
+          {
+            "color": "#00838F"
+          }
+        ]
+      }
+    ]
+  },
+  "scales": [
+    {
+      "name": "forecastGradient",
+      "type": "gradient",
+      "scale": [
+        {
+          "value": 0,
+          "color": "#E8F5E9"
+        },
+        {
+          "value": 1,
+          "color": "#2E7D32"
+        }
+      ]
+    }
+  ]
+}

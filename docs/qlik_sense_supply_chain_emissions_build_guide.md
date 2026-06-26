@@ -618,3 +618,14 @@ Options:
 - Forecast Method donut returns 60% Supplier Target and 40% Expert Judgement.
 - Changing any slider immediately changes forecast KPI, line, industry bar, and forecast table values.
 - Selecting Supplier Name, Industry, or Forecast Method filters every object consistently.
+
+
+## 8. Additional dashboard detail files
+
+Use these companion files for the expanded implementation package:
+
+- `docs/qlik_sense_dashboard_object_property_matrix.md` - detailed object settings, conditional formatting rules, master dimensions, and optional add-on sheets.
+- `docs/supply_chain_emissions_pdf_style_report.md` - PDF-style project documentation for handoff, review, and print/export.
+- `qlik/supply_chain_emissions_theme.json` - Qlik custom theme values for colors, typography, legends, axes, and palettes.
+- `data/supply_chain_emissions_supplier_year_default_forecast.csv` - generated default scenario data extract for validation and external review.
+- `data/supply_chain_emissions_scope_breakdown_2025.csv` - Scope 1/2/3 breakdown by supplier for supplier-detail visuals.

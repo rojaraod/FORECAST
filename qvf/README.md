@@ -41,3 +41,37 @@ qvf/Supply_Chain_Emissions_Forecasting_What_If.qvf
 - Generated supplier-year rows after reload: `1,650`.
 - 2025 current emissions: `619,700 tCO2e`.
 - Forecast method distribution: `30` Supplier Target, `20` Expert Judgement.
+
+
+## Expanded package additions
+
+The QVF source package now includes extra implementation and QA assets:
+
+- `../data/supply_chain_emissions_supplier_year_default_forecast.csv` - 1,650-row default scenario extract for validating the forecast curve outside Qlik.
+- `../data/supply_chain_emissions_scope_breakdown_2025.csv` - 150-row Scope 1/2/3 dataset for supplier-detail visuals.
+- `../qlik/supply_chain_emissions_theme.json` - custom Qlik theme settings.
+- `../docs/qlik_sense_dashboard_object_property_matrix.md` - detailed object configuration matrix.
+- `../docs/supply_chain_emissions_pdf_style_report.md` - PDF-style documentation handoff.
+
+## Detailed QVF build sequence
+
+1. Create or confirm the `SupplyChainData` data connection.
+2. Upload all CSV files from `../data/` if you want both the main dashboard and optional detail sheets.
+3. Run `node scripts/create_qvf_local_engine.mjs` to create the app shell and reload the main model.
+4. Open the app in Qlik Sense and verify the data model contains `FactSupplierYear` and `IndustrySort`.
+5. Add the custom theme from `../qlik/supply_chain_emissions_theme.json` if your tenant permits custom themes.
+6. Build the executive dashboard from `supply_chain_emissions_qvf_spec.json`.
+7. Use the object property matrix for labels, colors, conditional formatting, selection behavior, and export settings.
+8. Optionally add Supplier Detail and Industry Deep Dive sheets using the supplemental CSV extracts.
+9. Save, reload, and export the final app as `Supply_Chain_Emissions_Forecasting_What_If.qvf`.
+
+## Troubleshooting
+
+| Issue | Resolution |
+| --- | --- |
+| Local engine connection fails | Confirm Qlik Sense Desktop is running and check `QLIK_ENGINE_URL`. |
+| CSV cannot be found | Confirm the `SupplyChainData` connection points to the folder containing `supply_chain_emissions_suppliers_50.csv`. |
+| Reload succeeds but visuals are blank | Confirm variables exist and match the names in the build guide. |
+| Slider does not update measures | Use chart expressions from the guide so variables are evaluated at runtime. |
+| Theme does not apply | Import the theme in QMC/tenant admin or manually apply the listed colors. |
+| QVF export unavailable | Use Qlik Sense Desktop copy/export or Enterprise/QMC app export permissions. |
