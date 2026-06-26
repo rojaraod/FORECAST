@@ -1,0 +1,180 @@
+{
+  "schemaVersion": "1.0",
+  "name": "Supply Chain Emissions Dashboard Design Tokens",
+  "canvas": {
+    "desktop": {
+      "width": 1920,
+      "height": 1080,
+      "gridColumns": 24,
+      "gridRows": 14,
+      "marginPx": 12,
+      "gutterPx": 8
+    },
+    "tablet": {
+      "gridColumns": 12,
+      "marginPx": 10,
+      "gutterPx": 8
+    },
+    "mobile": {
+      "gridColumns": 4,
+      "marginPx": 8,
+      "gutterPx": 6
+    }
+  },
+  "radii": {
+    "cardPx": 8,
+    "controlPx": 6,
+    "buttonPx": 6
+  },
+  "spacingPx": {
+    "xs": 4,
+    "sm": 8,
+    "md": 12,
+    "lg": 16,
+    "xl": 24
+  },
+  "typography": {
+    "fontFamily": "Arial, Helvetica, sans-serif",
+    "headerTitle": {
+      "sizePx": 22,
+      "weight": 700,
+      "color": "#FFFFFF"
+    },
+    "headerSubtitle": {
+      "sizePx": 13,
+      "weight": 600,
+      "style": "italic",
+      "color": "#FFFFFF"
+    },
+    "sectionTitle": {
+      "sizePx": 12,
+      "weight": 700,
+      "color": "#111827"
+    },
+    "kpiTitle": {
+      "sizePx": 10,
+      "weight": 700,
+      "color": "#334155"
+    },
+    "kpiValue": {
+      "sizePx": 22,
+      "weight": 700
+    },
+    "tableBody": {
+      "sizePx": 9,
+      "weight": 500,
+      "color": "#334155"
+    }
+  },
+  "colors": {
+    "navy900": "#002B5C",
+    "navy800": "#003D7A",
+    "actualBlue": "#173B7A",
+    "forecastGreen": "#43A047",
+    "forecastGreenDark": "#2E7D32",
+    "expertOrange": "#FB8C00",
+    "baselineRed": "#EF5350",
+    "netZeroGray": "#8E8E8E",
+    "purple": "#7E57C2",
+    "teal": "#00838F",
+    "canvas": "#F6F8FB",
+    "card": "#FFFFFF",
+    "border": "#E5E7EB",
+    "textPrimary": "#111827",
+    "textSecondary": "#475569"
+  },
+  "objectPlacement": {
+    "header": {
+      "col": 1,
+      "row": 1,
+      "colSpan": 24,
+      "rowSpan": 1
+    },
+    "filters": {
+      "col": 1,
+      "row": 2,
+      "colSpan": 4,
+      "rowSpan": 4
+    },
+    "scenarioControls": {
+      "col": 1,
+      "row": 6,
+      "colSpan": 4,
+      "rowSpan": 5
+    },
+    "kpis": {
+      "col": 5,
+      "row": 2,
+      "colSpan": 20,
+      "rowSpan": 2
+    },
+    "lineChart": {
+      "col": 5,
+      "row": 4,
+      "colSpan": 14,
+      "rowSpan": 6
+    },
+    "donut": {
+      "col": 19,
+      "row": 4,
+      "colSpan": 6,
+      "rowSpan": 3
+    },
+    "industryBar": {
+      "col": 19,
+      "row": 7,
+      "colSpan": 6,
+      "rowSpan": 3
+    },
+    "table": {
+      "col": 1,
+      "row": 11,
+      "colSpan": 24,
+      "rowSpan": 4
+    }
+  },
+  "seriesStyles": {
+    "actual": {
+      "color": "#173B7A",
+      "lineWidthPx": 3,
+      "lineStyle": "solid",
+      "marker": "circle"
+    },
+    "forecast": {
+      "color": "#43A047",
+      "lineWidthPx": 2,
+      "lineStyle": "dotted",
+      "marker": "circle"
+    },
+    "baseline": {
+      "color": "#EF5350",
+      "lineWidthPx": 2,
+      "lineStyle": "dashed",
+      "marker": "none"
+    },
+    "netZero": {
+      "color": "#8E8E8E",
+      "lineWidthPx": 2,
+      "lineStyle": "dashed",
+      "marker": "none"
+    }
+  },
+  "responsiveRules": [
+    {
+      "breakpoint": ">=1440px",
+      "behavior": "full desktop layout"
+    },
+    {
+      "breakpoint": "1024-1439px",
+      "behavior": "desktop layout with fewer labels"
+    },
+    {
+      "breakpoint": "768-1023px",
+      "behavior": "collapse filters above KPI row and stack right panel"
+    },
+    {
+      "breakpoint": "<768px",
+      "behavior": "single-column scroll layout"
+    }
+  ]
+}

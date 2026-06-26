@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "1.1",
+  "schemaVersion": "1.2",
   "app": {
     "name": "Supply Chain Emissions Forecasting - What-If Analysis",
     "targetQvfFile": "Supply_Chain_Emissions_Forecasting_What_If.qvf",
@@ -14,7 +14,9 @@
     "objectPropertyMatrix": "../docs/qlik_sense_dashboard_object_property_matrix.md",
     "pdfStyleReport": "../docs/supply_chain_emissions_pdf_style_report.md",
     "defaultScenarioCsv": "../data/supply_chain_emissions_supplier_year_default_forecast.csv",
-    "scopeBreakdownCsv": "../data/supply_chain_emissions_scope_breakdown_2025.csv"
+    "scopeBreakdownCsv": "../data/supply_chain_emissions_scope_breakdown_2025.csv",
+    "detailedDesignSpec": "../docs/qlik_sense_dashboard_detailed_design_spec.md",
+    "designTokens": "../qlik/supply_chain_dashboard_design_tokens.json"
   },
   "data": {
     "connectionName": "lib://SupplyChainData",
@@ -489,6 +491,38 @@
       "Industry Deep Dive",
       "Scenario Comparison",
       "Data Quality"
-    ]
+    ],
+    "detailedDesign": {
+      "designSpec": "docs/qlik_sense_dashboard_detailed_design_spec.md",
+      "designTokens": "qlik/supply_chain_dashboard_design_tokens.json",
+      "desktopCanvas": {
+        "width": 1920,
+        "height": 1080,
+        "gridColumns": 24,
+        "gridRows": 14
+      },
+      "visualHierarchy": [
+        "Header context",
+        "Scenario controls",
+        "KPI outcomes",
+        "Main forecast trend",
+        "Distribution and industry contribution",
+        "Audit table"
+      ],
+      "accessibility": [
+        "Do not rely on color alone",
+        "Use line styles and labels for series distinction",
+        "Maintain WCAG AA text contrast",
+        "Use consistent tCO2e units"
+      ],
+      "qaChecklist": [
+        "KPI alignment",
+        "Slider reset behavior",
+        "Line chart styles",
+        "Tooltip completeness",
+        "Responsive stacking",
+        "Export readiness"
+      ]
+    }
   }
 }

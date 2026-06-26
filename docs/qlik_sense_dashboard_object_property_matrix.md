@@ -65,3 +65,17 @@ Use this matrix with `qlik_sense_supply_chain_emissions_build_guide.md` when con
 | Industry Deep Dive | Compare industries | Industry scatter, supplier table, regional contribution map |
 | Scenario Comparison | Compare default and custom settings | Side-by-side KPIs, variance waterfall, assumptions table |
 | Data Quality | Review input readiness | Data quality histogram, missing target list, owner filter |
+
+
+## Detailed design companion
+
+For implementation-level visual design, use `docs/qlik_sense_dashboard_detailed_design_spec.md`. It defines:
+
+- Desktop, tablet, and mobile placement rules.
+- Typography sizes and weights.
+- Card anatomy and KPI icon treatment.
+- Slider visual states and reset behavior.
+- Main chart line styles, labels, axes, and tooltips.
+- Accessibility and QA checks.
+
+The machine-readable design token file is `qlik/supply_chain_dashboard_design_tokens.json`.

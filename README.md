@@ -10,6 +10,8 @@ Qlik Sense artifacts for a Supply Chain Emissions Forecasting what-if dashboard.
 - `data/supply_chain_emissions_supplier_year_default_forecast.csv` - 1,650-row default scenario supplier-year CSV extract.
 - `data/supply_chain_emissions_scope_breakdown_2025.csv` - 150-row Scope 1/2/3 emissions breakdown CSV.
 - `docs/qlik_sense_dashboard_object_property_matrix.md` - detailed Qlik object configuration matrix.
+- `docs/qlik_sense_dashboard_detailed_design_spec.md` - detailed dashboard design specification.
+- `qlik/supply_chain_dashboard_design_tokens.json` - machine-readable dashboard design tokens.
 - `docs/supply_chain_emissions_pdf_style_report.md` - PDF-style handoff documentation.
 - `qlik/supply_chain_emissions_theme.json` - Qlik theme settings for the dashboard.
 

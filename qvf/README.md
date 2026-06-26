@@ -52,6 +52,8 @@ The QVF source package now includes extra implementation and QA assets:
 - `../qlik/supply_chain_emissions_theme.json` - custom Qlik theme settings.
 - `../docs/qlik_sense_dashboard_object_property_matrix.md` - detailed object configuration matrix.
 - `../docs/supply_chain_emissions_pdf_style_report.md` - PDF-style documentation handoff.
+- `../docs/qlik_sense_dashboard_detailed_design_spec.md` - detailed design specification for the dashboard UI.
+- `../qlik/supply_chain_dashboard_design_tokens.json` - machine-readable design tokens for Qlik layout and styling.
 
 ## Detailed QVF build sequence
 

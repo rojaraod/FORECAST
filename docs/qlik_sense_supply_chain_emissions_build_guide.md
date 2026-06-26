@@ -625,6 +625,8 @@ Options:
 Use these companion files for the expanded implementation package:
 
 - `docs/qlik_sense_dashboard_object_property_matrix.md` - detailed object settings, conditional formatting rules, master dimensions, and optional add-on sheets.
+- `docs/qlik_sense_dashboard_detailed_design_spec.md` - detailed dashboard design specification for layout, typography, object states, responsive rules, accessibility, and QA.
+- `qlik/supply_chain_dashboard_design_tokens.json` - machine-readable design tokens for grid, colors, typography, object placement, and line styles.
 - `docs/supply_chain_emissions_pdf_style_report.md` - PDF-style project documentation for handoff, review, and print/export.
 - `qlik/supply_chain_emissions_theme.json` - Qlik custom theme values for colors, typography, legends, axes, and palettes.
 - `data/supply_chain_emissions_supplier_year_default_forecast.csv` - generated default scenario data extract for validation and external review.
