@@ -1,0 +1,416 @@
+{
+  "schemaVersion": "1.0",
+  "app": {
+    "name": "Supply Chain Emissions Forecasting - What-If Analysis",
+    "targetQvfFile": "Supply_Chain_Emissions_Forecasting_What_If.qvf",
+    "description": "Qlik Sense app source specification for a supplier emissions forecast dashboard.",
+    "lastUpdated": "25 May 2025"
+  },
+  "sourceFiles": {
+    "csv": "../data/supply_chain_emissions_suppliers_50.csv",
+    "loadScript": "../qlik/supply_chain_emissions_what_if_model.qvs",
+    "buildGuide": "../docs/qlik_sense_supply_chain_emissions_build_guide.md"
+  },
+  "data": {
+    "connectionName": "lib://SupplyChainData",
+    "csvFileName": "supply_chain_emissions_suppliers_50.csv",
+    "supplierRows": 50,
+    "currentYear": 2025,
+    "currentEmissionsTotal": 619700,
+    "supplierTargetCount": 30,
+    "expertJudgementCount": 20,
+    "generatedFactGrain": "SupplierID + Year",
+    "generatedFactRows": 1650
+  },
+  "theme": {
+    "headerGradientStart": "#002B5C",
+    "headerGradientEnd": "#003D7A",
+    "sheetBackground": "#F6F8FB",
+    "cardBackground": "#FFFFFF",
+    "cardBorder": "#E5E7EB",
+    "actualLine": "#173B7A",
+    "forecastLine": "#43A047",
+    "baselineLine": "#EF5350",
+    "netZeroLine": "#8E8E8E",
+    "supplierTarget": "#43A047",
+    "expertJudgement": "#FB8C00",
+    "blue": "#2563EB",
+    "purple": "#7E57C2",
+    "teal": "#00838F"
+  },
+  "variables": [
+    {
+      "name": "vLastUpdated",
+      "default": "25 May 2025",
+      "type": "string"
+    },
+    {
+      "name": "vCurrentYear",
+      "default": 2025,
+      "type": "integer"
+    },
+    {
+      "name": "vBaselineYear",
+      "default": 2026,
+      "type": "integer"
+    },
+    {
+      "name": "vForecastYear",
+      "default": 2030,
+      "type": "integer",
+      "min": 2026,
+      "max": 2050,
+      "step": 1,
+      "color": "#43A047"
+    },
+    {
+      "name": "vAdditionalReductionPct",
+      "default": 0.05,
+      "type": "decimal",
+      "min": 0,
+      "max": 0.5,
+      "step": 0.01,
+      "format": "percent",
+      "color": "#2563EB"
+    },
+    {
+      "name": "vExpertJudgementAdjPct",
+      "default": 0.03,
+      "type": "decimal",
+      "min": 0,
+      "max": 0.3,
+      "step": 0.01,
+      "format": "percent",
+      "color": "#7E57C2"
+    },
+    {
+      "name": "vGrowthAdjustmentPct",
+      "default": 0.02,
+      "type": "decimal",
+      "min": -0.1,
+      "max": 0.2,
+      "step": 0.01,
+      "format": "percent",
+      "color": "#FB8C00"
+    },
+    {
+      "name": "vNetZeroTargetYear",
+      "default": 2050,
+      "type": "integer",
+      "min": 2035,
+      "max": 2050,
+      "step": 1,
+      "color": "#757575"
+    }
+  ],
+  "filters": [
+    {
+      "id": "filter_supplier",
+      "title": "Supplier Name",
+      "dimension": "SupplierName"
+    },
+    {
+      "id": "filter_industry",
+      "title": "Industry",
+      "dimension": "Industry",
+      "sortBy": "IndustrySortOrder"
+    },
+    {
+      "id": "filter_method",
+      "title": "Forecast Method",
+      "dimension": "ForecastMethod"
+    }
+  ],
+  "masterMeasures": [
+    {
+      "id": "m_current_2025",
+      "label": "Current Emissions 2025",
+      "expression": "Sum({<Year={2025}>} CurrentEmissions2025_tCO2e)",
+      "format": "#,##0"
+    },
+    {
+      "id": "m_forecast_dynamic",
+      "label": "Forecast Emissions Dynamic",
+      "expression": "Sum({<YearStatus={'Forecast'}>}\n  CurrentEmissions2025_tCO2e\n  * Pow(1 + $(vGrowthAdjustmentPct), YearsFromCurrent)\n  * RangeMax(\n      0,\n      1\n      - RangeMin(\n          0.95,\n          (BaseReduction2030Rate + $(vAdditionalReductionPct) + If(ForecastMethod = 'Expert Judgement', $(vExpertJudgementAdjPct), 0))\n          * RangeMin(YearsFromCurrent, 5) / 5\n        )\n      - If(\n          Year > $(vForecastYear),\n          RangeMin(1, (Year - $(vForecastYear)) / RangeMax(1, $(vNetZeroTargetYear) - $(vForecastYear)))\n          * RangeMax(0, 1 - (BaseReduction2030Rate + $(vAdditionalReductionPct) + If(ForecastMethod = 'Expert Judgement', $(vExpertJudgementAdjPct), 0))),\n          0\n        )\n    )\n)",
+      "format": "#,##0"
+    },
+    {
+      "id": "m_forecast_selected_year",
+      "label": "Forecast Emissions Selected Year",
+      "expression": "Sum({<Year={$(=$(vForecastYear))}>}\n  CurrentEmissions2025_tCO2e\n  * Pow(1 + $(vGrowthAdjustmentPct), YearsFromCurrent)\n  * RangeMax(\n      0,\n      1\n      - RangeMin(\n          0.95,\n          (BaseReduction2030Rate + $(vAdditionalReductionPct) + If(ForecastMethod = 'Expert Judgement', $(vExpertJudgementAdjPct), 0))\n          * RangeMin(YearsFromCurrent, 5) / 5\n        )\n      - If(\n          Year > $(vForecastYear),\n          RangeMin(1, (Year - $(vForecastYear)) / RangeMax(1, $(vNetZeroTargetYear) - $(vForecastYear)))\n          * RangeMax(0, 1 - (BaseReduction2030Rate + $(vAdditionalReductionPct) + If(ForecastMethod = 'Expert Judgement', $(vExpertJudgementAdjPct), 0))),\n          0\n        )\n    )\n)",
+      "format": "#,##0"
+    },
+    {
+      "id": "m_reduction_selected_year",
+      "label": "Reduction Selected Year",
+      "expression": "Sum({<Year={2025}>} CurrentEmissions2025_tCO2e) - (Sum({<Year={$(=$(vForecastYear))}>}\n  CurrentEmissions2025_tCO2e\n  * Pow(1 + $(vGrowthAdjustmentPct), YearsFromCurrent)\n  * RangeMax(\n      0,\n      1\n      - RangeMin(\n          0.95,\n          (BaseReduction2030Rate + $(vAdditionalReductionPct) + If(ForecastMethod = 'Expert Judgement', $(vExpertJudgementAdjPct), 0))\n          * RangeMin(YearsFromCurrent, 5) / 5\n        )\n      - If(\n          Year > $(vForecastYear),\n          RangeMin(1, (Year - $(vForecastYear)) / RangeMax(1, $(vNetZeroTargetYear) - $(vForecastYear)))\n          * RangeMax(0, 1 - (BaseReduction2030Rate + $(vAdditionalReductionPct) + If(ForecastMethod = 'Expert Judgement', $(vExpertJudgementAdjPct), 0))),\n          0\n        )\n    )\n))",
+      "format": "#,##0"
+    },
+    {
+      "id": "m_reduction_pct_selected_year",
+      "label": "Reduction Percent Selected Year",
+      "expression": "(Sum({<Year={2025}>} CurrentEmissions2025_tCO2e) - (Sum({<Year={$(=$(vForecastYear))}>}\n  CurrentEmissions2025_tCO2e\n  * Pow(1 + $(vGrowthAdjustmentPct), YearsFromCurrent)\n  * RangeMax(\n      0,\n      1\n      - RangeMin(\n          0.95,\n          (BaseReduction2030Rate + $(vAdditionalReductionPct) + If(ForecastMethod = 'Expert Judgement', $(vExpertJudgementAdjPct), 0))\n          * RangeMin(YearsFromCurrent, 5) / 5\n        )\n      - If(\n          Year > $(vForecastYear),\n          RangeMin(1, (Year - $(vForecastYear)) / RangeMax(1, $(vNetZeroTargetYear) - $(vForecastYear)))\n          * RangeMax(0, 1 - (BaseReduction2030Rate + $(vAdditionalReductionPct) + If(ForecastMethod = 'Expert Judgement', $(vExpertJudgementAdjPct), 0))),\n          0\n        )\n    )\n))) / Sum({<Year={2025}>} CurrentEmissions2025_tCO2e)",
+      "format": "0.0%"
+    }
+  ],
+  "sheet": {
+    "id": "sheet_supply_chain_forecast",
+    "title": "Supply Chain Emissions Forecasting - What-If Analysis",
+    "subtitle": "Historical (Thick Line) vs Forecast (Dotted Line)",
+    "grid": {
+      "columns": 24,
+      "rows": 14
+    },
+    "objects": [
+      {
+        "id": "header",
+        "type": "text-image",
+        "title": "Supply Chain Emissions Forecasting - What-If Analysis",
+        "subtitle": "Historical (Thick Line) vs Forecast (Dotted Line)",
+        "position": {
+          "col": 1,
+          "row": 1,
+          "colSpan": 24,
+          "rowSpan": 1
+        }
+      },
+      {
+        "id": "left_filters",
+        "type": "filter-panel",
+        "title": "Filters",
+        "position": {
+          "col": 1,
+          "row": 2,
+          "colSpan": 4,
+          "rowSpan": 4
+        },
+        "filters": [
+          "filter_supplier",
+          "filter_industry",
+          "filter_method"
+        ]
+      },
+      {
+        "id": "left_sliders",
+        "type": "variable-input-panel",
+        "title": "What-If Scenario Controls",
+        "position": {
+          "col": 1,
+          "row": 6,
+          "colSpan": 4,
+          "rowSpan": 5
+        },
+        "variables": [
+          "vForecastYear",
+          "vAdditionalReductionPct",
+          "vExpertJudgementAdjPct",
+          "vGrowthAdjustmentPct",
+          "vNetZeroTargetYear"
+        ]
+      },
+      {
+        "id": "kpi_current",
+        "type": "kpi",
+        "title": "Total Current Emissions (2025)",
+        "measure": "Num(Sum({<Year={2025}>} CurrentEmissions2025_tCO2e), '#,##0')",
+        "unit": "tCO2e",
+        "color": "#2E7D32",
+        "position": {
+          "col": 5,
+          "row": 2,
+          "colSpan": 3,
+          "rowSpan": 2
+        }
+      },
+      {
+        "id": "kpi_forecast",
+        "type": "kpi",
+        "title": "='Total Forecast Emissions (' & $(vForecastYear) & ')'",
+        "measure": "Num(Sum({<Year={$(=$(vForecastYear))}>}\n  CurrentEmissions2025_tCO2e\n  * Pow(1 + $(vGrowthAdjustmentPct), YearsFromCurrent)\n  * RangeMax(\n      0,\n      1\n      - RangeMin(\n          0.95,\n          (BaseReduction2030Rate + $(vAdditionalReductionPct) + If(ForecastMethod = 'Expert Judgement', $(vExpertJudgementAdjPct), 0))\n          * RangeMin(YearsFromCurrent, 5) / 5\n        )\n      - If(\n          Year > $(vForecastYear),\n          RangeMin(1, (Year - $(vForecastYear)) / RangeMax(1, $(vNetZeroTargetYear) - $(vForecastYear)))\n          * RangeMax(0, 1 - (BaseReduction2030Rate + $(vAdditionalReductionPct) + If(ForecastMethod = 'Expert Judgement', $(vExpertJudgementAdjPct), 0))),\n          0\n        )\n    )\n), '#,##0')",
+        "unit": "tCO2e",
+        "color": "#2563EB",
+        "position": {
+          "col": 8,
+          "row": 2,
+          "colSpan": 3,
+          "rowSpan": 2
+        }
+      },
+      {
+        "id": "kpi_reduction",
+        "type": "kpi",
+        "title": "='Total Reduction (2025 to ' & $(vForecastYear) & ')'",
+        "measure": "Num(Sum({<Year={2025}>} CurrentEmissions2025_tCO2e) - (Sum({<Year={$(=$(vForecastYear))}>}\n  CurrentEmissions2025_tCO2e\n  * Pow(1 + $(vGrowthAdjustmentPct), YearsFromCurrent)\n  * RangeMax(\n      0,\n      1\n      - RangeMin(\n          0.95,\n          (BaseReduction2030Rate + $(vAdditionalReductionPct) + If(ForecastMethod = 'Expert Judgement', $(vExpertJudgementAdjPct), 0))\n          * RangeMin(YearsFromCurrent, 5) / 5\n        )\n      - If(\n          Year > $(vForecastYear),\n          RangeMin(1, (Year - $(vForecastYear)) / RangeMax(1, $(vNetZeroTargetYear) - $(vForecastYear)))\n          * RangeMax(0, 1 - (BaseReduction2030Rate + $(vAdditionalReductionPct) + If(ForecastMethod = 'Expert Judgement', $(vExpertJudgementAdjPct), 0))),\n          0\n        )\n    )\n)), '#,##0')",
+        "unit": "tCO2e",
+        "color": "#2E7D32",
+        "position": {
+          "col": 11,
+          "row": 2,
+          "colSpan": 3,
+          "rowSpan": 2
+        }
+      },
+      {
+        "id": "kpi_reduction_pct",
+        "type": "kpi",
+        "title": "Reduction Achieved",
+        "measure": "Num((Sum({<Year={2025}>} CurrentEmissions2025_tCO2e) - (Sum({<Year={$(=$(vForecastYear))}>}\n  CurrentEmissions2025_tCO2e\n  * Pow(1 + $(vGrowthAdjustmentPct), YearsFromCurrent)\n  * RangeMax(\n      0,\n      1\n      - RangeMin(\n          0.95,\n          (BaseReduction2030Rate + $(vAdditionalReductionPct) + If(ForecastMethod = 'Expert Judgement', $(vExpertJudgementAdjPct), 0))\n          * RangeMin(YearsFromCurrent, 5) / 5\n        )\n      - If(\n          Year > $(vForecastYear),\n          RangeMin(1, (Year - $(vForecastYear)) / RangeMax(1, $(vNetZeroTargetYear) - $(vForecastYear)))\n          * RangeMax(0, 1 - (BaseReduction2030Rate + $(vAdditionalReductionPct) + If(ForecastMethod = 'Expert Judgement', $(vExpertJudgementAdjPct), 0))),\n          0\n        )\n    )\n))) / Sum({<Year={2025}>} CurrentEmissions2025_tCO2e), '0.0%')",
+        "unit": "vs Current",
+        "color": "#7E57C2",
+        "position": {
+          "col": 14,
+          "row": 2,
+          "colSpan": 3,
+          "rowSpan": 2
+        }
+      },
+      {
+        "id": "kpi_supplier_target",
+        "type": "kpi",
+        "title": "Suppliers with Target",
+        "measure": "Count({<SupplierTargetFlag={'Y'}>} DISTINCT SupplierID)",
+        "unit": "Suppliers",
+        "color": "#00838F",
+        "position": {
+          "col": 17,
+          "row": 2,
+          "colSpan": 3,
+          "rowSpan": 2
+        }
+      },
+      {
+        "id": "kpi_expert",
+        "type": "kpi",
+        "title": "Suppliers (Expert Judgement)",
+        "measure": "Count({<ForecastMethod={'Expert Judgement'}>} DISTINCT SupplierID)",
+        "unit": "Suppliers",
+        "color": "#FB8C00",
+        "position": {
+          "col": 20,
+          "row": 2,
+          "colSpan": 5,
+          "rowSpan": 2
+        }
+      },
+      {
+        "id": "line_forecast",
+        "type": "line-chart",
+        "title": "Emissions Forecast by Year (All Suppliers) - Historical vs Forecast (What-If Scenario)",
+        "dimension": "Year",
+        "position": {
+          "col": 5,
+          "row": 4,
+          "colSpan": 14,
+          "rowSpan": 6
+        },
+        "measures": [
+          {
+            "label": "Historical Emissions (Actual)",
+            "expression": "Sum({<YearStatus={'Actual'}>} CurrentEmissions2025_tCO2e * ActualFactor)",
+            "style": {
+              "color": "#173B7A",
+              "lineStyle": "solid",
+              "lineWidth": 3
+            }
+          },
+          {
+            "label": "Forecast Emissions (What-If)",
+            "expression": "Sum({<YearStatus={'Forecast'}>}\n  CurrentEmissions2025_tCO2e\n  * Pow(1 + $(vGrowthAdjustmentPct), YearsFromCurrent)\n  * RangeMax(\n      0,\n      1\n      - RangeMin(\n          0.95,\n          (BaseReduction2030Rate + $(vAdditionalReductionPct) + If(ForecastMethod = 'Expert Judgement', $(vExpertJudgementAdjPct), 0))\n          * RangeMin(YearsFromCurrent, 5) / 5\n        )\n      - If(\n          Year > $(vForecastYear),\n          RangeMin(1, (Year - $(vForecastYear)) / RangeMax(1, $(vNetZeroTargetYear) - $(vForecastYear)))\n          * RangeMax(0, 1 - (BaseReduction2030Rate + $(vAdditionalReductionPct) + If(ForecastMethod = 'Expert Judgement', $(vExpertJudgementAdjPct), 0))),\n          0\n        )\n    )\n)",
+            "style": {
+              "color": "#43A047",
+              "lineStyle": "dotted",
+              "lineWidth": 2
+            }
+          },
+          {
+            "label": "Baseline Emissions",
+            "expression": "Sum(CurrentEmissions2025_tCO2e * Pow(1 + $(vGrowthAdjustmentPct), $(vBaselineYear) - $(vCurrentYear)))",
+            "style": {
+              "color": "#EF5350",
+              "lineStyle": "dashed",
+              "lineWidth": 2
+            }
+          },
+          {
+            "label": "Net Zero Pathway",
+            "expression": "Sum(CurrentEmissions2025_tCO2e * Pow(1 + $(vGrowthAdjustmentPct), $(vForecastYear) - $(vCurrentYear)) * RangeMax(0, ($(vNetZeroTargetYear) - Year) / RangeMax(1, $(vNetZeroTargetYear) - $(vForecastYear))))",
+            "style": {
+              "color": "#8E8E8E",
+              "lineStyle": "dashed",
+              "lineWidth": 2
+            }
+          }
+        ]
+      },
+      {
+        "id": "donut_method",
+        "type": "pie-chart",
+        "variant": "donut",
+        "title": "Forecast Method Distribution",
+        "dimension": "ForecastMethod",
+        "measure": "Count(DISTINCT SupplierID)",
+        "position": {
+          "col": 19,
+          "row": 4,
+          "colSpan": 6,
+          "rowSpan": 3
+        },
+        "colorsByValue": {
+          "Supplier Target": "#43A047",
+          "Expert Judgement": "#FB8C00"
+        }
+      },
+      {
+        "id": "bar_industry",
+        "type": "bar-chart",
+        "orientation": "horizontal",
+        "title": "='Forecast Emissions by Industry (' & $(vForecastYear) & ')'",
+        "dimension": "Industry",
+        "measure": "Sum({<Year={$(=$(vForecastYear))}>}\n  CurrentEmissions2025_tCO2e\n  * Pow(1 + $(vGrowthAdjustmentPct), YearsFromCurrent)\n  * RangeMax(\n      0,\n      1\n      - RangeMin(\n          0.95,\n          (BaseReduction2030Rate + $(vAdditionalReductionPct) + If(ForecastMethod = 'Expert Judgement', $(vExpertJudgementAdjPct), 0))\n          * RangeMin(YearsFromCurrent, 5) / 5\n        )\n      - If(\n          Year > $(vForecastYear),\n          RangeMin(1, (Year - $(vForecastYear)) / RangeMax(1, $(vNetZeroTargetYear) - $(vForecastYear)))\n          * RangeMax(0, 1 - (BaseReduction2030Rate + $(vAdditionalReductionPct) + If(ForecastMethod = 'Expert Judgement', $(vExpertJudgementAdjPct), 0))),\n          0\n        )\n    )\n)",
+        "sort": "measure-desc",
+        "color": "#43A047",
+        "position": {
+          "col": 19,
+          "row": 7,
+          "colSpan": 6,
+          "rowSpan": 3
+        }
+      },
+      {
+        "id": "year_table",
+        "type": "straight-table",
+        "title": "Year-by-Year Forecast Data (All Suppliers)",
+        "dimension": "Year",
+        "position": {
+          "col": 1,
+          "row": 11,
+          "colSpan": 24,
+          "rowSpan": 4
+        },
+        "measures": [
+          {
+            "label": "Total Emissions",
+            "expression": "If(Only(YearStatus) = 'Actual', Sum(CurrentEmissions2025_tCO2e * ActualFactor), Sum({<YearStatus={'Forecast'}>}\n  CurrentEmissions2025_tCO2e\n  * Pow(1 + $(vGrowthAdjustmentPct), YearsFromCurrent)\n  * RangeMax(\n      0,\n      1\n      - RangeMin(\n          0.95,\n          (BaseReduction2030Rate + $(vAdditionalReductionPct) + If(ForecastMethod = 'Expert Judgement', $(vExpertJudgementAdjPct), 0))\n          * RangeMin(YearsFromCurrent, 5) / 5\n        )\n      - If(\n          Year > $(vForecastYear),\n          RangeMin(1, (Year - $(vForecastYear)) / RangeMax(1, $(vNetZeroTargetYear) - $(vForecastYear)))\n          * RangeMax(0, 1 - (BaseReduction2030Rate + $(vAdditionalReductionPct) + If(ForecastMethod = 'Expert Judgement', $(vExpertJudgementAdjPct), 0))),\n          0\n        )\n    )\n))"
+          },
+          {
+            "label": "Reduction vs 2025",
+            "expression": "If(Only(YearStatus) = 'Actual', Null(), Sum({<Year={2025}>} TOTAL CurrentEmissions2025_tCO2e) - (Sum({<YearStatus={'Forecast'}>}\n  CurrentEmissions2025_tCO2e\n  * Pow(1 + $(vGrowthAdjustmentPct), YearsFromCurrent)\n  * RangeMax(\n      0,\n      1\n      - RangeMin(\n          0.95,\n          (BaseReduction2030Rate + $(vAdditionalReductionPct) + If(ForecastMethod = 'Expert Judgement', $(vExpertJudgementAdjPct), 0))\n          * RangeMin(YearsFromCurrent, 5) / 5\n        )\n      - If(\n          Year > $(vForecastYear),\n          RangeMin(1, (Year - $(vForecastYear)) / RangeMax(1, $(vNetZeroTargetYear) - $(vForecastYear)))\n          * RangeMax(0, 1 - (BaseReduction2030Rate + $(vAdditionalReductionPct) + If(ForecastMethod = 'Expert Judgement', $(vExpertJudgementAdjPct), 0))),\n          0\n        )\n    )\n)))"
+          },
+          {
+            "label": "Reduction vs 2025 (%)",
+            "expression": "If(Only(YearStatus) = 'Actual', Null(), (Sum({<Year={2025}>} TOTAL CurrentEmissions2025_tCO2e) - (Sum({<YearStatus={'Forecast'}>}\n  CurrentEmissions2025_tCO2e\n  * Pow(1 + $(vGrowthAdjustmentPct), YearsFromCurrent)\n  * RangeMax(\n      0,\n      1\n      - RangeMin(\n          0.95,\n          (BaseReduction2030Rate + $(vAdditionalReductionPct) + If(ForecastMethod = 'Expert Judgement', $(vExpertJudgementAdjPct), 0))\n          * RangeMin(YearsFromCurrent, 5) / 5\n        )\n      - If(\n          Year > $(vForecastYear),\n          RangeMin(1, (Year - $(vForecastYear)) / RangeMax(1, $(vNetZeroTargetYear) - $(vForecastYear)))\n          * RangeMax(0, 1 - (BaseReduction2030Rate + $(vAdditionalReductionPct) + If(ForecastMethod = 'Expert Judgement', $(vExpertJudgementAdjPct), 0))),\n          0\n        )\n    )\n))) / Sum({<Year={2025}>} TOTAL CurrentEmissions2025_tCO2e))"
+          },
+          {
+            "label": "Forecast Status",
+            "expression": "Only(YearStatus)"
+          }
+        ]
+      }
+    ]
+  },
+  "exportNotes": [
+    "A valid .qvf binary must be saved/exported by Qlik Sense Desktop, Qlik Sense Enterprise, or Qlik Cloud.",
+    "Use scripts/create_qvf_local_engine.mjs with a running local Qlik Engine to create the data-model QVF shell.",
+    "Use docs/qlik_sense_supply_chain_emissions_build_guide.md and this JSON spec to create the visual sheet objects."
+  ]
+}

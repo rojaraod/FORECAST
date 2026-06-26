@@ -9,3 +9,7 @@ Qlik Sense artifacts for a Supply Chain Emissions Forecasting what-if dashboard.
 - `docs/qlik_sense_supply_chain_emissions_build_guide.md` - object-by-object dashboard dimensions, expressions, sliders, filters, colors, and options.
 
 The sample data totals 619,700 tCO2e for 2025 current emissions and includes 30 supplier-target records plus 20 expert-judgement records.
+
+## QVF development
+
+The `qvf/` folder contains a Qlik Sense QVF source package and instructions. A valid `.qvf` binary must be exported by Qlik Sense Desktop/Enterprise/Cloud; use `scripts/create_qvf_local_engine.mjs` with a running Qlik Engine to create and save the app shell from the included load script and CSV.
