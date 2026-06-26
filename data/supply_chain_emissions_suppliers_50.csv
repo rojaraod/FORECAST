@@ -1,0 +1,51 @@
+SupplierID,SupplierName,Region,Country,Industry,ProductCategory,ForecastMethod,SupplierTargetFlag,BaselineYear,BaselineEmissions_tCO2e,CurrentEmissions2025_tCO2e,BaseReduction2030Pct,DefaultAdditionalReductionPct,DefaultExpertAdjustmentPct,DefaultGrowthAdjustmentPct,NetZeroTargetYear,DataQualityScore,Scope1Pct,Scope2Pct,Scope3Pct,ContactOwner
+SUP-001,Atlas Mining Co.,APAC,Australia,Mining,Iron Ore,Supplier Target,Y,2018,30950,27650,36,5,0,2,2048,94,18,14,68,Procurement - Metals
+SUP-002,Northern Ore Partners,EMEA,Sweden,Mining,Copper Concentrate,Supplier Target,Y,2018,23750,21200,34,5,0,2,2048,92,17,13,70,Procurement - Metals
+SUP-003,Sierra Minerals,AMER,Chile,Mining,Lithium Carbonate,Expert Judgement,N,2018,20600,18400,24,5,3,2,2050,86,20,15,65,Procurement - Battery
+SUP-004,Green Ridge Mining,APAC,Indonesia,Mining,Nickel Matte,Supplier Target,Y,2018,16850,15050,38,5,0,2,2045,93,22,13,65,Procurement - Battery
+SUP-005,BlueRock Aggregates,AMER,Canada,Mining,Aggregate,Expert Judgement,N,2018,13450,12000,22,5,3,2,2050,84,21,11,68,Construction Sourcing
+SUP-006,Terra Excavation,EMEA,South Africa,Mining,Manganese,Supplier Target,Y,2018,22700,20250,32,5,0,2,2047,91,19,15,66,Procurement - Metals
+SUP-007,Horizon Steelworks,APAC,India,Steel,Hot Rolled Coil,Supplier Target,Y,2018,26950,24050,35,5,0,2,2048,95,29,18,53,Direct Materials
+SUP-008,Pioneer Metals,EMEA,Germany,Steel,Stainless Steel,Supplier Target,Y,2018,22550,20150,33,5,0,2,2047,93,27,17,56,Direct Materials
+SUP-009,Riverbend Steel,AMER,United States,Steel,Rebar,Expert Judgement,N,2018,18600,16600,23,5,3,2,2050,85,30,16,54,Construction Sourcing
+SUP-010,Kanto Specialty Steel,APAC,Japan,Steel,Precision Steel,Supplier Target,Y,2018,17400,15550,37,5,0,2,2046,94,25,19,56,Engineering Sourcing
+SUP-011,Crescent Alloy Ltd.,EMEA,Turkey,Steel,Alloy Bar,Expert Judgement,N,2018,14500,12950,21,5,3,2,2050,82,31,14,55,Direct Materials
+SUP-012,Metro Sheet Metals,AMER,Mexico,Steel,Sheet Metal,Supplier Target,Y,2018,16250,14500,31,5,0,2,2049,90,26,18,56,Engineering Sourcing
+SUP-013,Continental Cement,EMEA,France,Cement,Clinker,Supplier Target,Y,2018,24400,21800,34,5,0,2,2048,93,34,12,54,Construction Sourcing
+SUP-014,Summit Cement Group,AMER,United States,Cement,Portland Cement,Expert Judgement,N,2018,21100,18850,24,5,3,2,2050,84,36,11,53,Construction Sourcing
+SUP-015,Delta Building Materials,APAC,Vietnam,Cement,Ready Mix,Supplier Target,Y,2018,17700,15800,35,5,0,2,2047,92,33,13,54,Construction Sourcing
+SUP-016,LimeStone Works,EMEA,Italy,Cement,Limestone,Expert Judgement,N,2018,13850,12350,20,5,3,2,2050,80,35,10,55,Construction Sourcing
+SUP-017,Urban Concrete Supply,AMER,Brazil,Cement,Concrete,Supplier Target,Y,2018,16350,14600,32,5,0,2,2049,89,32,12,56,Construction Sourcing
+SUP-018,NovaChem Inputs,EMEA,Netherlands,Chemicals,Solvents,Supplier Target,Y,2018,19400,17300,36,5,0,2,2046,94,24,20,56,Indirect Materials
+SUP-019,Evergreen Polymers,AMER,United States,Chemicals,Resins,Expert Judgement,N,2018,17250,15400,25,5,3,2,2050,86,23,21,56,Packaging Sourcing
+SUP-020,Pacific Additives,APAC,China,Chemicals,Additives,Supplier Target,Y,2018,15550,13900,34,5,0,2,2048,91,22,19,59,Indirect Materials
+SUP-021,Solstice Chemicals,EMEA,Spain,Chemicals,Coatings,Supplier Target,Y,2018,12950,11550,30,5,0,2,2049,89,21,20,59,Indirect Materials
+SUP-022,Orion Industrial Gases,AMER,Canada,Chemicals,Industrial Gas,Expert Judgement,N,2018,12550,11200,22,5,3,2,2050,82,25,18,57,Manufacturing Services
+SUP-023,SwiftLine Freight,AMER,United States,Logistics,Road Freight,Supplier Target,Y,2018,17550,15650,33,5,0,2,2048,92,14,8,78,Logistics
+SUP-024,OceanBridge Carriers,APAC,Singapore,Logistics,Ocean Freight,Expert Judgement,N,2018,14650,13100,23,5,3,2,2050,84,16,7,77,Logistics
+SUP-025,EuroRail Logistics,EMEA,Poland,Logistics,Rail Freight,Supplier Target,Y,2018,12300,11000,38,5,0,2,2045,96,10,9,81,Logistics
+SUP-026,Metro Distribution,AMER,Mexico,Logistics,Warehousing,Supplier Target,Y,2018,10550,9400,31,5,0,2,2049,88,12,12,76,Logistics
+SUP-027,SkyLift Air Cargo,EMEA,United Arab Emirates,Logistics,Air Freight,Expert Judgement,N,2018,12700,11350,19,5,3,2,2050,79,18,6,76,Logistics
+SUP-028,Harvest Foods Co.,AMER,United States,Food & Beverage,Grains,Supplier Target,Y,2018,14050,12550,32,5,0,2,2049,91,12,10,78,Agriculture Sourcing
+SUP-029,FreshFields Produce,EMEA,Netherlands,Food & Beverage,Fresh Produce,Supplier Target,Y,2018,12000,10700,36,5,0,2,2046,94,11,11,78,Agriculture Sourcing
+SUP-030,Tropico Ingredients,APAC,Thailand,Food & Beverage,Sweeteners,Expert Judgement,N,2018,11000,9800,22,5,3,2,2050,83,13,9,78,Agriculture Sourcing
+SUP-031,DairyPath Supply,EMEA,Denmark,Food & Beverage,Dairy,Supplier Target,Y,2018,10700,9550,34,5,0,2,2047,92,15,12,73,Agriculture Sourcing
+SUP-032,BlueLake Beverages,AMER,Brazil,Food & Beverage,Beverage Base,Expert Judgement,N,2018,8750,7800,20,5,3,2,2050,81,10,11,79,Agriculture Sourcing
+SUP-033,CircuitPro Components,APAC,Taiwan,Electronics,Circuit Boards,Supplier Target,Y,2018,12950,11550,37,5,0,2,2046,95,15,24,61,Electronics Sourcing
+SUP-034,BrightChip Devices,APAC,South Korea,Electronics,Semiconductors,Supplier Target,Y,2018,12100,10800,35,5,0,2,2047,93,16,25,59,Electronics Sourcing
+SUP-035,NorthStar Sensors,AMER,United States,Electronics,Sensors,Expert Judgement,N,2018,9900,8850,23,5,3,2,2050,84,14,23,63,Electronics Sourcing
+SUP-036,Electra Assemblies,EMEA,Czech Republic,Electronics,Assemblies,Supplier Target,Y,2018,9400,8400,31,5,0,2,2049,89,13,22,65,Electronics Sourcing
+SUP-037,ValueMart Retail Supply,AMER,United States,Retail,Store Fixtures,Expert Judgement,N,2018,10200,9100,21,5,3,2,2050,82,8,12,80,Retail Operations
+SUP-038,Urban Merch Partners,EMEA,United Kingdom,Retail,General Merchandise,Supplier Target,Y,2018,9400,8400,33,5,0,2,2048,91,7,13,80,Retail Operations
+SUP-039,OmniStore Services,APAC,Malaysia,Retail,Display Services,Expert Judgement,N,2018,8300,7400,22,5,3,2,2050,88,9,12,79,Retail Operations
+SUP-040,ShelfReady Goods,AMER,Canada,Retail,Private Label,Expert Judgement,N,2018,7650,6850,20,5,3,2,2050,80,8,11,81,Retail Operations
+SUP-041,EcoPack Films,EMEA,Germany,Packaging,Flexible Film,Supplier Target,Y,2018,9650,8600,34,5,0,2,2047,92,18,18,64,Packaging Sourcing
+SUP-042,BoxWorks International,AMER,United States,Packaging,Corrugate,Supplier Target,Y,2018,8600,7700,36,5,0,2,2046,93,16,17,67,Packaging Sourcing
+SUP-043,ClearBottle Plastics,APAC,Thailand,Packaging,PET Bottles,Expert Judgement,N,2018,7950,7100,22,5,3,2,2050,83,20,16,64,Packaging Sourcing
+SUP-044,PaperLoop Mills,EMEA,Finland,Packaging,Paperboard,Supplier Target,Y,2018,6950,6200,38,5,0,2,2045,96,14,19,67,Packaging Sourcing
+SUP-045,GreenWrap Packaging,AMER,Mexico,Packaging,Shrink Wrap,Expert Judgement,N,2018,6100,5450,21,5,3,2,2050,81,18,17,65,Packaging Sourcing
+SUP-046,CottonWay Textiles,APAC,India,Textiles,Cotton Fabric,Supplier Target,Y,2018,8600,7700,33,5,0,2,2048,91,11,20,69,Textile Sourcing
+SUP-047,WeaveRight Mills,EMEA,Portugal,Textiles,Knit Fabric,Supplier Target,Y,2018,7400,6600,35,5,0,2,2047,93,10,21,69,Textile Sourcing
+SUP-048,DyeStar Processing,APAC,Bangladesh,Textiles,Dyeing,Expert Judgement,N,2018,6950,6200,22,5,3,2,2050,82,13,22,65,Textile Sourcing
+SUP-049,FiberLink Global,AMER,Peru,Textiles,Yarn,Supplier Target,Y,2018,6250,5600,32,5,0,2,2049,88,12,19,69,Textile Sourcing
+SUP-050,DenimSource Ltd.,EMEA,Turkey,Textiles,Denim,Expert Judgement,N,2018,5800,5200,20,5,3,2,2050,80,14,20,66,Textile Sourcing

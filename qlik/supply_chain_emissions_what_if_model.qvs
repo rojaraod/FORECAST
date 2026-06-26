@@ -1,0 +1,129 @@
+/*
+Supply Chain Emissions Forecasting - What-If Analysis
+Qlik Sense load script module
+
+Use with data/supply_chain_emissions_suppliers_50.csv.
+The source CSV has 50 supplier records. This script expands those records into a
+supplier-year fact scaffold so chart expressions can respond instantly to slider
+variables without a data reload.
+*/
+
+SET ThousandSep=',';
+SET DecimalSep='.';
+SET MoneyThousandSep=',';
+SET MoneyDecimalSep='.';
+SET MoneyFormat='$#,##0.00;-$#,##0.00';
+SET TimeFormat='h:mm:ss TT';
+SET DateFormat='DD MMM YYYY';
+SET TimestampFormat='DD MMM YYYY h:mm:ss[.fff] TT';
+SET FirstWeekDay=0;
+SET BrokenWeeks=1;
+SET ReferenceDay=0;
+SET FirstMonthOfYear=1;
+SET CollationLocale='en-US';
+SET CreateSearchIndexOnReload=1;
+
+// Change this connection name if your Qlik Sense data connection is different.
+SET vDataConnection = 'lib://SupplyChainData';
+
+// Dashboard defaults. Create matching UI variables for Variable input sliders.
+SET vLastUpdated = '25 May 2025';
+SET vCurrentYear = 2025;
+SET vBaselineYear = 2026;
+SET vForecastYear = 2030;
+SET vAdditionalReductionPct = 0.05;
+SET vExpertJudgementAdjPct = 0.03;
+SET vGrowthAdjustmentPct = 0.02;
+SET vNetZeroTargetYear = 2050;
+
+SupplierSource:
+LOAD
+    SupplierID,
+    SupplierName,
+    Region,
+    Country,
+    Industry,
+    ProductCategory,
+    ForecastMethod,
+    SupplierTargetFlag,
+    If(SupplierTargetFlag = 'Y', 1, 0) as HasSupplierTarget,
+    Num(BaselineYear) as BaselineYear,
+    Num(BaselineEmissions_tCO2e) as BaselineEmissions_tCO2e,
+    Num(CurrentEmissions2025_tCO2e) as CurrentEmissions2025_tCO2e,
+    Num(BaseReduction2030Pct) / 100 as BaseReduction2030Rate,
+    Num(DefaultAdditionalReductionPct) / 100 as DefaultAdditionalReductionRate,
+    Num(DefaultExpertAdjustmentPct) / 100 as DefaultExpertAdjustmentRate,
+    Num(DefaultGrowthAdjustmentPct) / 100 as DefaultGrowthAdjustmentRate,
+    Num(NetZeroTargetYear) as SupplierNetZeroTargetYear,
+    Num(DataQualityScore) as DataQualityScore,
+    Num(Scope1Pct) / 100 as Scope1Rate,
+    Num(Scope2Pct) / 100 as Scope2Rate,
+    Num(Scope3Pct) / 100 as Scope3Rate,
+    ContactOwner
+FROM [$(vDataConnection)/supply_chain_emissions_suppliers_50.csv]
+(txt, utf8, embedded labels, delimiter is ',', msq);
+
+YearScaffold:
+LOAD
+    2018 + IterNo() - 1 as Year,
+    If(2018 + IterNo() - 1 <= $(vCurrentYear), 'Actual', 'Forecast') as YearStatus,
+    2018 + IterNo() - 1 - $(vCurrentYear) as YearsFromCurrent,
+    Pick(
+        Match(2018 + IterNo() - 1, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025),
+        1.162, 1.137, 1.113, 1.089, 1.073, 1.041, 1.016, 1.000
+    ) as ActualFactor
+AUTOGENERATE 1
+WHILE 2018 + IterNo() - 1 <= 2050;
+
+// Denormalized fact grain: one row per SupplierID and Year.
+// Record count after reload should be 50 suppliers * 33 years = 1,650 rows.
+FactSupplierYear:
+LOAD
+    SupplierID,
+    SupplierName,
+    Region,
+    Country,
+    Industry,
+    ProductCategory,
+    ForecastMethod,
+    SupplierTargetFlag,
+    HasSupplierTarget,
+    BaselineYear,
+    BaselineEmissions_tCO2e,
+    CurrentEmissions2025_tCO2e,
+    BaseReduction2030Rate,
+    DefaultAdditionalReductionRate,
+    DefaultExpertAdjustmentRate,
+    DefaultGrowthAdjustmentRate,
+    SupplierNetZeroTargetYear,
+    DataQualityScore,
+    Scope1Rate,
+    Scope2Rate,
+    Scope3Rate,
+    ContactOwner
+RESIDENT SupplierSource;
+JOIN (FactSupplierYear)
+LOAD
+    Year,
+    YearStatus,
+    YearsFromCurrent,
+    ActualFactor
+RESIDENT YearScaffold;
+
+IndustrySort:
+LOAD * INLINE [
+Industry, IndustrySortOrder
+Mining, 1
+Steel, 2
+Cement, 3
+Chemicals, 4
+Logistics, 5
+Food & Beverage, 6
+Electronics, 7
+Retail, 8
+Packaging, 9
+Textiles, 10
+];
+
+DROP TABLE SupplierSource;
+DROP TABLE YearScaffold;
