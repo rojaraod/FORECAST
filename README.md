@@ -7,6 +7,7 @@ Qlik Sense artifacts for a Supply Chain Emissions Forecasting what-if dashboard.
 - `data/supply_chain_emissions_suppliers_50.csv` - 50 supplier records for emissions forecasting.
 - `qlik/supply_chain_emissions_what_if_model.qvs` - Qlik Sense load script for the end-to-end supplier-year data model.
 - `docs/qlik_sense_supply_chain_emissions_build_guide.md` - object-by-object dashboard dimensions, expressions, sliders, filters, colors, and options.
+- `docs/end_to_end_qlik_sense_build_runbook.md` - step-by-step Qlik Sense platform build runbook.
 - `data/supply_chain_emissions_supplier_year_default_forecast.csv` - 1,650-row default scenario supplier-year CSV extract.
 - `data/supply_chain_emissions_scope_breakdown_2025.csv` - 150-row Scope 1/2/3 emissions breakdown CSV.
 - `docs/qlik_sense_dashboard_object_property_matrix.md` - detailed Qlik object configuration matrix.
