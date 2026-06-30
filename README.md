@@ -5,11 +5,11 @@ for a corporate ESG supply-chain emissions what-if dashboard.
 
 ## Contents
 
-- `qlik/supply_chain_emissions_what_if_load_script.qvs`  
+- `qlik/supply_chain_emissions_what_if_load_script.qvs`
   Qlik load script for the supplied supplier emissions CSV.
-- `docs/qlik_expression_catalog.md`  
+- `docs/qlik_expression_catalog.md`
   Native Qlik helper variables, KPIs, chart measures, and table expressions.
-- `docs/qlik_dashboard_build_guide.md`  
+- `docs/qlik_dashboard_build_guide.md`
   Step-by-step Qlik Sense UI build instructions.
 
 ## Source data
