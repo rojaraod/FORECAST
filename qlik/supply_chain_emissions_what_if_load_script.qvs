@@ -1,0 +1,168 @@
+/*
+Supply Chain Emissions Forecasting - What-If Analysis
+Qlik Sense Enterprise native load script
+
+Purpose
+-------
+Load the supplied supplier emissions CSV, create a clean supplier model, and
+generate a scenario-year island used by native Qlik Sense charts for historical
+and forecast what-if analysis. The forecast calculations are intentionally left
+as chart expressions so that variable inputs can recalculate instantly without
+requiring a data reload.
+
+Source file expected
+--------------------
+supplier_emissions_source_100_records_c6ee.csv
+
+Required source fields
+----------------------
+Supplier_Id, Supplier_Name, Industry, Country, Revenue, Spend,
+Emissions_Year, Total_Emissions, Baseline_Year, Target_Year,
+Baseline_Emissions, Target_Reduction_Pct, Supplier_Forecast_Flag,
+Expert_Judgement_Reduction_Percentage, Final_Reduction_Pct,
+Final_Forecast_Method
+
+Setup
+-----
+1. Upload the CSV to a Qlik data connection, for example:
+   lib://ESG_Source_Data/
+2. Update vSourceDataFile if your connection or file name differs.
+3. Paste this script into the app Data load editor and reload.
+4. Create the master measures and helper variables from:
+   docs/qlik_expression_catalog.md
+*/
+
+SET ThousandSep=',';
+SET DecimalSep='.';
+SET MoneyThousandSep=',';
+SET MoneyDecimalSep='.';
+SET MoneyFormat='$#,##0;-$#,##0';
+SET TimeFormat='h:mm:ss TT';
+SET DateFormat='YYYY-MM-DD';
+SET TimestampFormat='YYYY-MM-DD h:mm:ss[.fff] TT';
+SET FirstWeekDay=0;
+SET BrokenWeeks=1;
+SET ReferenceDay=0;
+SET FirstMonthOfYear=1;
+SET CollationLocale='en-US';
+SET CreateSearchIndexOnReload=1;
+
+// Change this connection path to match your Qlik Sense environment.
+SET vSourceDataFile=lib://ESG_Source_Data/supplier_emissions_source_100_records_c6ee.csv;
+
+// Business-owned what-if defaults. Expose these as variable controls on the
+// dashboard sheet; chart expressions recalculate without a reload.
+LET vForecastYear = 2030;
+LET vAdditionalReductionPct = 0.05;
+LET vExpertJudgementAdjustmentPct = 0.03;
+LET vGrowthAdjustmentPct = 0.02;
+LET vNetZeroYear = 2050;
+
+Raw_Supplier_Emissions:
+LOAD
+    Text(Supplier_Id) AS [Supplier ID],
+    Text(Supplier_Name) AS [Supplier Name],
+    Text(Industry) AS [Industry],
+    Text(Country) AS [Country],
+    Num#(Revenue) AS [Revenue],
+    Num#(Spend) AS [Spend],
+    Num#(Emissions_Year) AS [Current Year],
+    Num#(Total_Emissions) AS [Current Emissions],
+    Num#(Baseline_Year) AS [Baseline Year],
+    Num#(Target_Year) AS [Target Year],
+    Num#(Baseline_Emissions) AS [Baseline Emissions],
+    If(Len(Trim(Target_Reduction_Pct)) = 0, Null(), Num#(Target_Reduction_Pct)) AS [Supplier Target Reduction Pct],
+    Text(Supplier_Forecast_Flag) AS [Supplier Forecast Flag],
+    If(
+        Len(Trim(Expert_Judgement_Reduction_Percentage)) = 0,
+        0,
+        Num#(Expert_Judgement_Reduction_Percentage)
+    ) AS [Expert Judgement Reduction Pct],
+    If(
+        Len(Trim(Final_Reduction_Pct)) = 0,
+        If(Len(Trim(Target_Reduction_Pct)) = 0, Num#(Expert_Judgement_Reduction_Percentage), Num#(Target_Reduction_Pct)),
+        Num#(Final_Reduction_Pct)
+    ) AS [Final Reduction Pct],
+    Text(Final_Forecast_Method) AS [Forecast Method]
+FROM [$(vSourceDataFile)]
+(txt, codepage is 65001, embedded labels, delimiter is ',', msq);
+
+Supplier:
+NoConcatenate
+LOAD
+    [Supplier ID],
+    [Supplier Name],
+    [Industry],
+    [Country],
+    [Revenue],
+    [Spend],
+    [Current Year],
+    [Current Emissions],
+    [Baseline Year],
+    [Target Year],
+    [Baseline Emissions],
+    [Supplier Target Reduction Pct],
+    [Supplier Forecast Flag],
+    [Expert Judgement Reduction Pct],
+    [Final Reduction Pct],
+    If([Forecast Method] = 'Expert Judgement', 'Expert Judgement', 'Supplier Target') AS [Forecast Method],
+    If(IsNull([Supplier Target Reduction Pct]), 'No supplier target', 'Supplier target available') AS [Target Availability],
+    If([Forecast Method] = 'Expert Judgement', 1, 0) AS [Expert Judgement Supplier Flag],
+    If([Forecast Method] = 'Supplier Target', 1, 0) AS [Supplier Target Supplier Flag],
+    RangeMax(
+        0,
+        [Baseline Emissions] - [Current Emissions]
+    ) AS [Reduction Since Baseline],
+    RangeMax(
+        0,
+        [Baseline Emissions] * [Final Reduction Pct]
+    ) AS [Planned Reduction From Baseline]
+RESIDENT Raw_Supplier_Emissions;
+
+DROP TABLE Raw_Supplier_Emissions;
+
+// Forecast-method color lookup for native chart coloring.
+Forecast_Method_Color:
+LOAD * INLINE [
+Forecast Method, Forecast Method Color
+Supplier Target, #43A047
+Expert Judgement, #FB8C00
+];
+
+// Determine the scenario horizon from the data and governed net-zero year.
+Scenario_Bounds:
+LOAD
+    Min([Baseline Year]) AS [Scenario Start Year],
+    Max([Current Year]) AS [Data Current Year],
+    Count(DISTINCT [Supplier ID]) AS [Supplier Count]
+RESIDENT Supplier;
+
+LET vScenarioStartYear = Num(Peek('Scenario Start Year', 0, 'Scenario_Bounds'));
+LET vDataCurrentYear = Num(Peek('Data Current Year', 0, 'Scenario_Bounds'));
+
+DROP TABLE Scenario_Bounds;
+
+// Island table: intentionally not linked to Supplier. It lets a single chart
+// year drive parameterized expressions while supplier filters stay independent.
+Scenario_Year:
+LOAD
+    $(vScenarioStartYear) + IterNo() - 1 AS [Scenario Year],
+    If(
+        $(vScenarioStartYear) + IterNo() - 1 <= $(vDataCurrentYear),
+        'Historical',
+        'Forecast'
+    ) AS [Scenario Period],
+    If($(vScenarioStartYear) + IterNo() - 1 = $(vForecastYear), 1, 0) AS [Default Forecast Year Flag]
+AUTOGENERATE 1
+WHILE $(vScenarioStartYear) + IterNo() - 1 <= $(vNetZeroYear);
+
+// Small display table for the sheet subtitle and assumption card.
+What_If_Assumptions:
+LOAD * INLINE [
+Assumption, Variable Name, Default Value, Display Format
+Forecast Year, vForecastYear, 2030, 0
+Additional Reduction, vAdditionalReductionPct, 0.05, 0.0%
+Expert Judgement Adjustment, vExpertJudgementAdjustmentPct, 0.03, 0.0%
+Growth Adjustment, vGrowthAdjustmentPct, 0.02, 0.0%
+Net Zero Target Year, vNetZeroYear, 2050, 0
+];
