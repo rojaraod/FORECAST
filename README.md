@@ -24,6 +24,10 @@ for a corporate ESG supply-chain emissions what-if dashboard.
   expressions, and chart measures.
 - `docs/qlik_sheet2_design_development_guide.md`
   End-to-end data model, design, and development instructions for Sheet 2.
+- `docs/sheet2_front_dashboard_design_development_steps.md`
+  Object-by-object front dashboard design and development guide for Sheet 2.
+- `docs/Sheet2_Front_Dashboard_Design_and_Development_Steps.docx`
+  Word document version of the Sheet 2 front dashboard build guide.
 
 ## Source data
 
